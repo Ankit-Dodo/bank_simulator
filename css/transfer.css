@@ -1,0 +1,72 @@
+/* Center the form */
+body {
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #0056b3; 
+}
+
+/* Outer container */
+#transferForm {
+    width: 420px;
+    background: #fff;
+    margin: 40px auto;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Label styling */
+#transferForm label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Input fields */
+#transferForm input[type="text"],
+#transferForm input[type="number"],
+#transferForm input[type="password"] {
+    width: 100%;
+    height: 35px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+/* Error messages */
+.error {
+    font-size: 12px;
+    color: red;
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 8px;
+}
+
+/* Submit Button */
+#transferForm button {
+    width: 100%;
+    height: 40px;
+    background: #0b63ce;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#transferForm button:hover {
+    background: #0952aa;
+}

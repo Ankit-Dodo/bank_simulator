@@ -1,0 +1,99 @@
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f2f6;
+}
+
+/* NAVBAR */
+.navbar {
+    /* width: 100%; */
+    height: 65px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 28px;
+    margin-right: 10px;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1e3799;
+}
+.nav-right {
+    display: flex; 
+    align-items: center;
+
+}
+
+.nav-right a {
+    margin-left: 25px;
+    color: #2f3542;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+    display: block; 
+    padding: 0 10px; /
+}
+
+.nav-right a:hover {
+    color: #1e3799;
+}
+
+/* CENTER CARD */
+.center-box {
+    width: 420px;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.center-logo {
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.center-box h2 {
+    margin: 10px 0;
+    color: #1e3799;
+}
+
+.center-box p {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+/* BUTTON */
+.btn {
+    background: #1e3799;
+    color: white;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 6px;
+    display: inline-block;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #0c2461;
+}

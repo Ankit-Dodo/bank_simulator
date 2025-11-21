@@ -1,0 +1,90 @@
+/* Form container style for customer_details and create_account */
+
+.form-card {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* HEADINGS */
+
+.form-card h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* for Create Account */
+.form-create-title {
+    color: #0056b3;
+}
+
+.form-details-title {
+    color: #1976d2;
+}
+
+/* LABELS */
+
+.form-card label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+/* INPUTS, SELECTS, TEXTAREAS */
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 94.5%;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: 0.25s;
+}
+
+/* Focus State */
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    border-color: #1976d2;
+    background: white;
+    box-shadow: 0 0 3px rgba(25, 118, 210, 0.3);
+    outline: none;
+}
+
+/* BUTTONS  */
+
+.form-card button {
+    width: 100%;
+    padding: 12px;
+    background: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.form-card button:hover {
+    background: #003e7f;
+}
+
+/*small text */
+
+.form-note {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-top: 12px;
+}
