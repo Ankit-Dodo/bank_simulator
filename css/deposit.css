@@ -1,4 +1,3 @@
-/* ---------- Deposit Form Container ---------- */
 form {
     max-width: 420px;
     margin: 25px auto;
@@ -8,16 +7,15 @@ form {
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* ---------- Page Title ---------- */
+/*  Page Title */
 h3 {
     text-align: center;
     margin-top: 20px;
     font-size: 24px;
     font-weight: 600;
-    color: #0056b3; /* blue */
+    color:#1e3799; /* blue */
 }
 
-/* ---------- Input Labels ---------- */
 form label {
     display: block;
     font-size: 15px;
@@ -26,7 +24,6 @@ form label {
     color: #333;
 }
 
-/* ---------- Inputs ---------- */
 form input[type="text"],
 form input[type="number"] {
     width: 99%;
@@ -43,15 +40,15 @@ form input[type="number"] {
 form input:focus {
     border-color: #1976d2; /* blue */
     background: #fff;
-    box-shadow: 0 0 3px rgba(25, 118, 210, 0.3); /* blue glow */
+    box-shadow: 0 0 3px rgba(25, 118, 210, 0.3); 
     outline: none;
 }
 
-/* ---------- Submit Button ---------- */
+/* Submit Button */
 form button {
     width: 100%;
     padding: 12px;
-    background: #1976d2; /* blue */
+    background: #1e3799;
     color: white;
     border: none;
     border-radius: 8px;
@@ -62,10 +59,9 @@ form button {
 }
 
 form button:hover {
-    background: #105a9e; /* darker blue */
+    background: #0c2461;
 }
 
-/* ---------- Error Text ---------- */
 .error-text {
     display: block;
     font-size: 12px;

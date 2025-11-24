@@ -3,8 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-include("../config/db.php");
-include("../includes/header.php");
+require_once "../config/db.php";
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../pages/login.php");
@@ -13,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int)$_SESSION['user_id'];
 
-// ---------- Determine if current user is admin (from DB) ----------
+/* ---------- Determine if current user is admin ---------- */
 $isAdmin = false;
 $roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
 $roleRes = mysqli_query($conn, $roleSql);
@@ -22,9 +21,7 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($roleRow['role']) === 'admin');
 }
 
-// ---------- Load accounts for dropdown ----------
-//  - Customer: only their own active accounts
-//  - Admin   : all active accounts (any customer)
+/* ---------- Load accounts for dropdown ---------- */
 $accounts = [];
 
 if ($isAdmin) {
@@ -55,7 +52,7 @@ if ($isAdmin) {
             u.username
         FROM account a
         INNER JOIN profile p ON a.profile_id = p.id
-        INNERJOIN users u ON p.user_id = u.id
+        INNER JOIN users u ON p.user_id = u.id
         WHERE u.id = $user_id
           AND LOWER(a.status) = 'active'
         ORDER BY a.account_number ASC
@@ -68,103 +65,106 @@ if ($result && mysqli_num_rows($result) > 0) {
         $accounts[] = $row;
     }
 }
+
+include "../includes/header.php";
 ?>
 
-<link rel="stylesheet" href="../css/transfer.css">
+<h3 class="page-title-center">Transfer Money</h3>
 
-<div class="transfer-container">
-    <div class="transfer-card">
-        <h3 class="transfer-title">Transfer Money</h3>
+<div class="form-container-center">
+    <?php if (empty($accounts)): ?>
+        <p class="empty-text" style="text-align:center;">
+            No active accounts available for transfer.
+        </p>
+    <?php else: ?>
+        <form id="transferForm" method="post" action="../actions/transfer_action.php">
 
-        <?php if (empty($accounts)): ?>
-            <p style="text-align:center; margin-top:20px;">
-                No active accounts available for transfer.
-            </p>
-        <?php else: ?>
-            <form class="transfer-form" id="transferForm" method="post" action="../actions/transfer_action.php">
-                <!-- From Account (dropdown) -->
-                <label for="from_account_id">From Account:</label>
+            <!-- From Account -->
+            <div class="form-group">
+                <label for="from_account_id">From Account</label>
                 <select id="from_account_id" name="from_account_id" required>
                     <option value="">-- Select Account --</option>
                     <?php foreach ($accounts as $acc): ?>
-                        <option value="<?php echo (int)$acc['account_id']; ?>">
-                            <?php
-                                echo htmlspecialchars($acc['account_number'])
-                                     . " - " . htmlspecialchars($acc['account_type'])
-                                     . " (Rs." . number_format((float)$acc['balance'], 2) . ")"
-                                     . " - " . htmlspecialchars($acc['full_name']);
-                            ?>
+                        <option value="<?= (int)$acc['account_id'] ?>">
+                            <?= htmlspecialchars($acc['account_number']) ?>
+                            - <?= htmlspecialchars($acc['account_type']) ?>
+                            (₹<?= number_format((float)$acc['balance'], 2) ?>)
+                            - <?= htmlspecialchars($acc['full_name']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <span class="error" id="fromAccountError"></span>
+                <span class="error-message" id="fromAccountError"></span>
+            </div>
 
-                <!-- Amount -->
-                <label for="amount">Amount:</label>
+            <!-- Amount -->
+            <div class="form-group">
+                <label for="amount">Amount</label>
                 <input type="text" id="amount" name="amount" required>
-                <span class="error" id="amountError"></span>
+                <span class="error-message" id="amountError"></span>
+            </div>
 
-                <!-- Receiver account -->
-                <label for="account_number">Receiver's Account Number:</label>
+            <!-- Receiver account -->
+            <div class="form-group">
+                <label for="account_number">Receiver's Account Number</label>
                 <input type="text" id="account_number" name="account_number" required>
-                <span class="error" id="accountNumberError"></span>
+                <span class="error-message" id="accountNumberError"></span>
+            </div>
 
-                <!-- Confirm receiver account -->
-                <label for="confirm_account_number">Confirm Account Number:</label>
+            <!-- Confirm receiver account -->
+            <div class="form-group">
+                <label for="confirm_account_number">Confirm Account Number</label>
                 <input type="text" id="confirm_account_number" name="confirm_account_number" required>
-                <span class="error" id="confirmAccountError"></span>
+                <span class="error-message" id="confirmAccountError"></span>
+            </div>
 
-                <button type="submit" class="transfer-btn">Send Money</button>
-            </form>
-        <?php endif; ?>
-    </div>
+            <button type="submit" class="btn-primary">Send Money</button>
+        </form>
+    <?php endif; ?>
 </div>
 
 <script>
-document.getElementById('transferForm')?.addEventListener('submit', function(event) {
+document.getElementById("transferForm")?.addEventListener("submit", function(event) {
     let isValid = true;
 
-    const fromAccount = document.getElementById('from_account_id');
-    const amount = document.getElementById('amount').value.trim();
-    const accNum = document.getElementById('account_number').value.trim();
-    const confirmAccNum = document.getElementById('confirm_account_number').value.trim();
+    const fromAccount = document.getElementById("from_account_id");
+    const amountVal   = document.getElementById("amount").value.trim();
+    const accNum      = document.getElementById("account_number").value.trim();
+    const confirmAcc  = document.getElementById("confirm_account_number").value.trim();
 
-    // error spans
-    const fromAccountError = document.getElementById('fromAccountError');
-    const amountError      = document.getElementById('amountError');
-    const accError         = document.getElementById('accountNumberError');
-    const confirmError     = document.getElementById('confirmAccountError');
+    const errFrom  = document.getElementById("fromAccountError");
+    const errAmt   = document.getElementById("amountError");
+    const errAcc   = document.getElementById("accountNumberError");
+    const errConf  = document.getElementById("confirmAccountError");
 
-    // reset errors
-    fromAccountError.textContent = '';
-    amountError.textContent      = '';
-    accError.textContent         = '';
-    confirmError.textContent     = '';
+    errFrom.textContent = "";
+    errAmt.textContent  = "";
+    errAcc.textContent  = "";
+    errConf.textContent = "";
 
-    // 0. From account must be selected
+    // From account required
     if (!fromAccount.value) {
-        fromAccountError.textContent = 'Please select an account to transfer from.';
+        errFrom.textContent = "Please select an account.";
         isValid = false;
     }
 
-    // 1. Amount must be numeric & > 0
-    const amountNum = parseFloat(amount);
-    if (!amount || isNaN(amountNum) || amountNum <= 0) {
-        amountError.textContent = 'Please enter a valid positive amount.';
+    // Amount validation
+    const amountNum = parseFloat(amountVal);
+    if (!amountVal || isNaN(amountNum) || amountNum <= 0) {
+        errAmt.textContent = "Enter a valid positive amount.";
         isValid = false;
     }
 
-    // 2. Account number must be digits only (6–20)
+    // Account number: 6–20 digits
     const digitsOnly = /^[0-9]{6,20}$/;
     if (!digitsOnly.test(accNum)) {
-        accError.textContent = 'Account number must be 6–20 digits.';
+        errAcc.textContent = "Account number must be 6–20 digits.";
         isValid = false;
     }
 
-    // 3. Both account numbers must match
-    if (accNum !== confirmAccNum) {
-        accError.textContent = 'Account numbers do not match.';
-        confirmError.textContent = 'Account numbers do not match.';
+    // Confirm match
+    if (accNum !== confirmAcc) {
+        errAcc.textContent  = "Account numbers do not match.";
+        errConf.textContent = "Account numbers do not match.";
         isValid = false;
     }
 
@@ -174,4 +174,4 @@ document.getElementById('transferForm')?.addEventListener('submit', function(eve
 });
 </script>
 
-<?php include("../includes/footer.php"); ?>
+<?php include "../includes/footer.php"; ?>

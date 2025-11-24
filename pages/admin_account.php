@@ -26,11 +26,6 @@ $totalUsersSql = "SELECT COUNT(*) AS total_users FROM users";
 $totalUsersRes = mysqli_query($conn, $totalUsersSql);
 $totalUsers = (int)mysqli_fetch_assoc($totalUsersRes)['total_users'];
 
-// Total transactions
-$totalTxSql = "SELECT COUNT(*) AS total_tx FROM `transaction`";
-$totalTxRes = mysqli_query($conn, $totalTxSql);
-$totalTransactions = (int)mysqli_fetch_assoc($totalTxRes)['total_tx'];
-
 
 //  PENDING ACCOUNTS 
 $pendingSql = "
@@ -89,11 +84,6 @@ $accountsRes = mysqli_query($conn, $accountsSql);
     <div class="stat-box">
         <h4>Total Users</h4>
         <p><?= $totalUsers ?></p>
-    </div>
-
-    <div class="stat-box">
-        <h4>Total Transactions</h4>
-        <p><?= $totalTransactions ?></p>
     </div>
 
 </div>

@@ -1,62 +1,129 @@
-<?php include("../config/db.php"); ?>
-<?php include("../includes/header.php"); ?>
-<link rel="stylesheet" href="../css/withdraw.css">
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+require_once "../config/db.php";
 
-<form id="withdrawForm" method="post" action="../actions/withdraw_action.php">
-    
-    <h3>Withdraw Money</h3>
-    <label for="amount">Amount:</label>
-    <input type="text" id="amount" name="amount" required>
-    <span class="error" id="amountError"></span><br>
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../pages/login.php");
+    exit;
+}
 
-    <label for="account_number">Account Number:</label>
-    <input type="text" id="account_number" name="account_number" required>
-    <span class="error" id="accountNumberError"></span><br>
+$user_id = (int)$_SESSION['user_id'];
 
-    <label for="confirm_account_number">Confirm Account Number:</label>
-    <input type="text" id="confirm_account_number" name="confirm_account_number" required>
-    <span class="error" id="confirmAccountError"></span><br>
+//  checking the role (admin/ customer)
+$isAdmin = false;
+$roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
+$roleRes = mysqli_query($conn, $roleSql);
+if ($roleRes && mysqli_num_rows($roleRes) === 1) {
+    $roleRow = mysqli_fetch_assoc($roleRes);
+    $isAdmin = (strtolower($roleRow['role']) === 'admin');
+}
 
-    <button type="submit">Withdraw Money</button>
-</form>
+$accounts = [];
+
+if ($isAdmin) {
+    // Admin: all active accounts
+    $sql = "
+        SELECT 
+            a.account_id,
+            a.account_number,
+            a.account_type,
+            a.balance,
+            p.full_name,
+            u.username
+        FROM account a
+        INNER JOIN profile p ON a.profile_id = p.id
+        INNER JOIN users u ON p.user_id = u.id
+        WHERE LOWER(a.status) = 'active'
+        ORDER BY p.full_name ASC, a.account_number ASC
+    ";
+} else {
+    // Customer: only their own active accounts
+    $sql = "
+        SELECT 
+            a.account_id,
+            a.account_number,
+            a.account_type,
+            a.balance,
+            p.full_name,
+            u.username
+        FROM account a
+        INNER JOIN profile p ON a.profile_id = p.id
+        INNER JOIN users u ON p.user_id = u.id
+        WHERE u.id = $user_id
+          AND LOWER(a.status) = 'active'
+        ORDER BY a.account_number ASC
+    ";
+}
+
+$result = mysqli_query($conn, $sql);
+if ($result && mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $accounts[] = $row;
+    }
+}
+
+include "../includes/header.php";
+?>
+
+<h3 class="page-title-center">Withdraw Money</h3>
+
+<div class="form-container-center">
+    <?php if (empty($accounts)): ?>
+        <p class="empty-text" style="text-align:center;">
+            No active accounts available for withdrawal.
+        </p>
+    <?php else: ?>
+        <form id="withdrawForm" method="post" action="../actions/withdraw_action.php">
+            <div class="form-group">
+                <label for="from_account_id">From Account</label>
+                <select id="from_account_id" name="from_account_id" required>
+                    <option value="">-- Select Account --</option>
+                    <?php foreach ($accounts as $acc): ?>
+                        <option value="<?= (int)$acc['account_id'] ?>">
+                            <?= htmlspecialchars($acc['account_number']) ?>
+                            - <?= htmlspecialchars($acc['account_type']) ?>
+                            (₹<?= number_format((float)$acc['balance'], 2) ?>)
+                            - <?= htmlspecialchars($acc['full_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <span class="error-message" id="fromAccountError"></span>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (₹)</label>
+                <input type="text" id="amount" name="amount" required>
+                <span class="error-message" id="amountError"></span>
+            </div>
+
+            <button type="submit" class="btn-primary">Withdraw Money</button>
+        </form>
+    <?php endif; ?>
+</div>
 
 <script>
-document.getElementById('withdrawForm').addEventListener('submit', function(event) {
+document.getElementById('withdrawForm')?.addEventListener('submit', function(event) {
     let isValid = true;
 
-    const amount = document.getElementById('amount').value.trim();
-    const accNum = document.getElementById('account_number').value.trim();
-    const confirmAccNum = document.getElementById('confirm_account_number').value.trim();
+    const fromAccount = document.getElementById('from_account_id');
+    const amountVal   = document.getElementById('amount').value.trim();
 
-    // error spans
-    const amountError  = document.getElementById('amountError');
-    const accError     = document.getElementById('accountNumberError');
-    const confirmError = document.getElementById('confirmAccountError');
+    const fromError = document.getElementById('fromAccountError');
+    const amountError = document.getElementById('amountError');
 
-    // reset errors
-    amountError.textContent  = '';
-    accError.textContent     = '';
-    confirmError.textContent = '';
+    fromError.textContent = '';
+    amountError.textContent = '';
 
-    // 1. Amount must be numeric & > 0
-    const amountNum = parseFloat(amount);
-    if (!amount || isNaN(amountNum) || amountNum <= 0) {
+    if (!fromAccount.value) {
+        fromError.textContent = 'Please select an account.';
+        isValid = false;
+    }
+
+    const amountNum = parseFloat(amountVal);
+    if (!amountVal || isNaN(amountNum) || amountNum <= 0) {
         amountError.textContent = 'Please enter a valid positive amount.';
-        isValid = false;
-    }
-
-    // 2. Account number must be digits only (6–20)
-    const digitsOnly = /^[0-9]{6,20}$/;
-    if (!digitsOnly.test(accNum)) {
-        accError.textContent = 'Account number must be 6–20 digits.';
-        isValid = false;
-    }
-
-    // 3. Both account numbers must match
-    if (accNum !== confirmAccNum) {
-        accError.textContent = 'Account numbers do not match.';
-        confirmError.textContent = 'Account numbers do not match.';
         isValid = false;
     }
 
@@ -66,4 +133,4 @@ document.getElementById('withdrawForm').addEventListener('submit', function(even
 });
 </script>
 
-<?php include("../includes/footer.php"); ?>
+<?php include "../includes/footer.php"; ?>
