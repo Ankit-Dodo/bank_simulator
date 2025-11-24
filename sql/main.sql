@@ -54,15 +54,16 @@ CREATE TABLE account (
 -- Transaction table
 DROP TABLE IF EXISTS `transaction`;
 CREATE TABLE `transaction` (
-    transaction_id INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     account_id INT NOT NULL,
-    transaction_type_id INT NOT NULL,
+    transaction_type ENUM('deposit','withdraw','transfer') NOT NULL,
     amount BIGINT NOT NULL,
-    transaction_date DATETIME NOT NULL,
+    transaction_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     performed_by INT NOT NULL,
-    Status ENUM('completed','pending','cancelled') NOT NULL DEFAULT 'completed',
-    PRIMARY KEY (transaction_id)
+    status ENUM('completed','pending','cancelled') NOT NULL DEFAULT 'completed',
+    PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 
 -- Users table Data
@@ -100,3 +101,11 @@ INSERT INTO account (account_id, profile_id, account_type, account_number, balan
 (15, 6, 'salary', 2915132205, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
 (16, 7, 'salary', 9198726596, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 14:33:37');
 
+
+INSERT INTO `transaction` 
+(id, account_id, transaction_type, amount, transaction_date, performed_by, status) VALUES
+(1, 3, 'deposit', 500, '2025-11-24 11:40:53', 1, 'completed'),
+(2, 3, 'deposit', 500, '2025-11-24 11:41:10', 1, 'completed'),
+(3, 3, 'withdraw', 100, '2025-11-24 11:41:47', 1, 'completed'),
+(4, 3, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
+(5, 11, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed');

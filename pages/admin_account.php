@@ -32,8 +32,7 @@ $totalTxRes = mysqli_query($conn, $totalTxSql);
 $totalTransactions = (int)mysqli_fetch_assoc($totalTxRes)['total_tx'];
 
 
-// --------------------- PENDING ACCOUNTS ---------------------
-
+//  PENDING ACCOUNTS 
 $pendingSql = "
     SELECT a.account_id, a.account_number, a.account_type, a.balance, a.status,
            a.min_balance, a.ifsc_code, a.account_date,
@@ -47,8 +46,7 @@ $pendingSql = "
 $pendingRes = mysqli_query($conn, $pendingSql);
 
 
-// --------------------- ALL ACCOUNTS ---------------------
-
+//  ALL ACCOUNTS 
 $accountsSql = "
     SELECT a.account_id, a.account_number, a.account_type, a.balance, a.status,
            a.ifsc_code, a.account_date,
