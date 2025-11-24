@@ -51,6 +51,20 @@ CREATE TABLE account (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- Transaction table
+DROP TABLE IF EXISTS `transaction`;
+CREATE TABLE `transaction` (
+    transaction_id INT NOT NULL AUTO_INCREMENT,
+    account_id INT NOT NULL,
+    transaction_type_id INT NOT NULL,
+    amount BIGINT NOT NULL,
+    transaction_date DATETIME NOT NULL,
+    performed_by INT NOT NULL,
+    Status ENUM('completed','pending','cancelled') NOT NULL DEFAULT 'completed',
+    PRIMARY KEY (transaction_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 -- Users table Data
 INSERT INTO users (id, username, role, email, created_at, last_login, password_hash) VALUES
 (1, 'Ankit', 'admin', 'ankitrawat@gmail.com', '2025-11-18 07:01:00', '2025-11-18 07:01:00', '$2y$12$dy8UcRaiczzu8NgHQjaQh.icZKuNdkLt0/40Ji0ubH9OaVDmwlRqy'),
