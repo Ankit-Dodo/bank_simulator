@@ -13,6 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $user_id = (int)($_SESSION['user_id'] ?? 0);
 
+if ($user_id <= 0) {
+    die("Invalid session.");
+}
+
+// -------- Role / Admin Check --------
+$isAdmin = false;
+$roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
+$roleRes = mysqli_query($conn, $roleSql);
+if ($roleRes && mysqli_num_rows($roleRes) === 1) {
+    $row = mysqli_fetch_assoc($roleRes);
+    $isAdmin = (strtolower($row['role']) === 'admin');
+}
+
 // -------- Read & Validate Input --------
 $amount      = trim($_POST['amount'] ?? '');
 $acc         = trim($_POST['account_number'] ?? '');
@@ -40,21 +53,35 @@ if ($acc_digits === '') {
 
 $acc_esc = mysqli_real_escape_string($conn, $acc_digits);
 
-// -------- Find the user’s account --------
-// FIXED for new schema: a.profile_id → p.id
-$sql = "
-    SELECT a.account_id, a.balance, a.status, a.min_balance
-    FROM account a
-    JOIN profile p ON a.profile_id = p.id
-    WHERE p.user_id = $user_id
-      AND a.account_number = '$acc_esc'
-    LIMIT 1
-";
+//   Customer: only their own account
+//   Admin   : any customer's account
+if ($isAdmin) {
+    $sql = "
+        SELECT a.account_id, a.balance, a.status, a.min_balance
+        FROM account a
+        JOIN profile p ON a.profile_id = p.id
+        WHERE a.account_number = '$acc_esc'
+        LIMIT 1
+    ";
+} else {
+    $sql = "
+        SELECT a.account_id, a.balance, a.status, a.min_balance
+        FROM account a
+        JOIN profile p ON a.profile_id = p.id
+        WHERE p.user_id = $user_id
+          AND a.account_number = '$acc_esc'
+        LIMIT 1
+    ";
+}
 
 $result = mysqli_query($conn, $sql);
 
 if (!$result || mysqli_num_rows($result) === 0) {
-    die("Account not found or does not belong to you.");
+    if ($isAdmin) {
+        die("Account not found.");
+    } else {
+        die("Account not found or does not belong to you.");
+    }
 }
 
 $account = mysqli_fetch_assoc($result);
@@ -83,10 +110,22 @@ $updateSql = "
     WHERE account_id = $account_id
 ";
 
-if (mysqli_query($conn, $updateSql)) {
-    header("Location: ../pages/home.php");
-    exit;
-} else {
-    echo "Error updating balance: " . mysqli_error($conn);
+if (!mysqli_query($conn, $updateSql)) {
+    die("Error updating balance: " . mysqli_error($conn));
 }
+
+$logSql = "
+    INSERT INTO `transaction`
+        (account_id, transaction_type, amount, transaction_date, performed_by, status)
+    VALUES
+        ($account_id, 'withdraw', $amount_int, NOW(), $user_id, 'completed')
+";
+
+if (!mysqli_query($conn, $logSql)) {
+    die("Balance updated, but failed to log transaction: " . mysqli_error($conn));
+}
+
+// On success, redirect
+header("Location: ../pages/home.php?success=Withdraw+completed");
+exit;
 ?>

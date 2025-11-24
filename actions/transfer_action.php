@@ -11,19 +11,35 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Logged-in user
 $user_id = (int)($_SESSION['user_id'] ?? 0);
 if ($user_id <= 0) {
     die("Invalid user session.");
 }
 
+// Get role from DB
+$isAdmin = false;
+$roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
+$roleRes = mysqli_query($conn, $roleSql);
+if ($roleRes && mysqli_num_rows($roleRes) === 1) {
+    $row = mysqli_fetch_assoc($roleRes);
+    $isAdmin = (strtolower($row['role']) === 'admin');
+}
+
 // ---------- Read & validate input ----------
+$from_account_id_raw = $_POST['from_account_id'] ?? '';
 $amount      = trim($_POST['amount'] ?? '');
 $acc         = trim($_POST['account_number'] ?? '');
 $acc_confirm = trim($_POST['confirm_account_number'] ?? '');
 
-if ($amount === '' || $acc === '' || $acc_confirm === '') {
+if ($from_account_id_raw === '' || $amount === '' || $acc === '' || $acc_confirm === '') {
     die("All fields are required.");
 }
+
+if (!ctype_digit($from_account_id_raw)) {
+    die("Invalid sender account selection.");
+}
+$from_account_id = (int)$from_account_id_raw;
 
 if ($acc !== $acc_confirm) {
     die("Account numbers do not match.");
@@ -38,54 +54,67 @@ if ($amount_int <= 0) {
     die("Invalid transfer amount.");
 }
 
-// Account number: digits only
+// Clean receiver account number
 $acc_digits = preg_replace('/\D/', '', $acc);
 if ($acc_digits === '' || strlen($acc_digits) < 6 || strlen($acc_digits) > 20) {
     die("Invalid receiver account number.");
 }
 
-// ---------- Find sender account (current user) ----------
-$senderSql = "
-    SELECT a.account_id, a.balance, a.min_balance, a.status
-    FROM account a
-    JOIN profile p ON a.profile_id = p.id
-    WHERE p.user_id = ?
-      AND LOWER(a.status) = 'active'
-    ORDER BY a.account_id ASC
-    LIMIT 1
-";
-
-if (!$senderStmt = mysqli_prepare($conn, $senderSql)) {
-    die("Error preparing sender query: " . mysqli_error($conn));
+// ---------- Find SENDER account ----------
+if ($isAdmin) {
+    // Admin: any active account by ID
+    $senderSql = "
+        SELECT a.account_id, a.balance, a.min_balance, a.status
+        FROM account a
+        WHERE a.account_id = $from_account_id
+        LIMIT 1
+    ";
+} else {
+    // Customer: sender account must belong to them
+    $senderSql = "
+        SELECT a.account_id, a.balance, a.min_balance, a.status
+        FROM account a
+        JOIN profile p ON a.profile_id = p.id
+        WHERE p.user_id = $user_id
+          AND a.account_id = $from_account_id
+        LIMIT 1
+    ";
 }
-mysqli_stmt_bind_param($senderStmt, "i", $user_id);
-mysqli_stmt_execute($senderStmt);
-$senderRes = mysqli_stmt_get_result($senderStmt);
-mysqli_stmt_close($senderStmt);
+
+$senderRes = mysqli_query($conn, $senderSql);
 
 if (!$senderRes || mysqli_num_rows($senderRes) === 0) {
-    die("No active account found for the current user.");
+    if ($isAdmin) {
+        die("Sender account not found.");
+    } else {
+        die("Sender account not found or does not belong to you.");
+    }
 }
 
 $sender = mysqli_fetch_assoc($senderRes);
+
 $sender_account_id = (int)$sender['account_id'];
 $sender_balance    = (int)$sender['balance'];
 $sender_min        = (int)$sender['min_balance'];
 
-// Check minimum balance rule
+if (strtolower($sender['status']) !== 'active') {
+    die("Sender account is not active.");
+}
+
 $new_sender_balance = $sender_balance - $amount_int;
 if ($new_sender_balance < $sender_min) {
     die("Insufficient balance: cannot go below minimum balance.");
 }
 
-// ---------- Find receiver account (by account number) ----------
+// ---------- Find RECEIVER account ----------
 $receiverSql = "
     SELECT account_id, balance, status
     FROM account
     WHERE account_number = ?
     LIMIT 1
 ";
-if (!$receiverStmt = mysqli_prepare($conn, $receiverSql)) {
+$receiverStmt = mysqli_prepare($conn, $receiverSql);
+if (!$receiverStmt) {
     die("Error preparing receiver query: " . mysqli_error($conn));
 }
 mysqli_stmt_bind_param($receiverStmt, "s", $acc_digits);
@@ -98,13 +127,14 @@ if (!$receiverRes || mysqli_num_rows($receiverRes) === 0) {
 }
 
 $receiver = mysqli_fetch_assoc($receiverRes);
+
 $receiver_account_id = (int)$receiver['account_id'];
 
 if (strtolower($receiver['status']) !== 'active') {
     die("Receiver account is not active.");
 }
 
-// Prevent sending to same account
+// Prevent self-transfer
 if ($receiver_account_id === $sender_account_id) {
     die("Cannot transfer to the same account.");
 }
@@ -116,42 +146,47 @@ try {
     // Deduct from sender
     $updateSenderSql = "
         UPDATE account
-        SET balance = balance - ?
-        WHERE account_id = ?
+        SET balance = balance - $amount_int
+        WHERE account_id = $sender_account_id
     ";
-    if (!$updateSenderStmt = mysqli_prepare($conn, $updateSenderSql)) {
-        throw new Exception("Failed to prepare sender update: " . mysqli_error($conn));
+    if (!mysqli_query($conn, $updateSenderSql) || mysqli_affected_rows($conn) !== 1) {
+        throw new Exception("Failed to deduct from sender account: " . mysqli_error($conn));
     }
-    mysqli_stmt_bind_param($updateSenderStmt, "ii", $amount_int, $sender_account_id);
-    mysqli_stmt_execute($updateSenderStmt);
 
-    if (mysqli_stmt_affected_rows($updateSenderStmt) !== 1) {
-        $err = mysqli_stmt_error($updateSenderStmt);
-        mysqli_stmt_close($updateSenderStmt);
-        throw new Exception("Failed to deduct from sender account. " . $err);
+    // Log sender transaction
+    $logSenderSql = "
+        INSERT INTO `transaction`
+            (account_id, transaction_type, amount, transaction_date, performed_by, status)
+        VALUES
+            ($sender_account_id, 'transfer', $amount_int, NOW(), $user_id, 'completed')
+    ";
+    if (!mysqli_query($conn, $logSenderSql)) {
+        throw new Exception("Failed to log sender transaction: " . mysqli_error($conn));
     }
-    mysqli_stmt_close($updateSenderStmt);
 
     // Credit receiver
     $updateReceiverSql = "
         UPDATE account
-        SET balance = balance + ?
-        WHERE account_id = ?
+        SET balance = balance + $amount_int
+        WHERE account_id = $receiver_account_id
     ";
-    if (!$updateReceiverStmt = mysqli_prepare($conn, $updateReceiverSql)) {
-        throw new Exception("Failed to prepare receiver update: " . mysqli_error($conn));
+    if (!mysqli_query($conn, $updateReceiverSql) || mysqli_affected_rows($conn) !== 1) {
+        throw new Exception("Failed to credit receiver account: " . mysqli_error($conn));
     }
-    mysqli_stmt_bind_param($updateReceiverStmt, "ii", $amount_int, $receiver_account_id);
-    mysqli_stmt_execute($updateReceiverStmt);
 
-    if (mysqli_stmt_affected_rows($updateReceiverStmt) !== 1) {
-        $err = mysqli_stmt_error($updateReceiverStmt);
-        mysqli_stmt_close($updateReceiverStmt);
-        throw new Exception("Failed to credit receiver account. " . $err);
+    // Log receiver transaction
+    $logReceiverSql = "
+        INSERT INTO `transaction`
+            (account_id, transaction_type, amount, transaction_date, performed_by, status)
+        VALUES
+            ($receiver_account_id, 'transfer', $amount_int, NOW(), $user_id, 'completed')
+    ";
+    if (!mysqli_query($conn, $logReceiverSql)) {
+        throw new Exception("Failed to log receiver transaction: " . mysqli_error($conn));
     }
-    mysqli_stmt_close($updateReceiverStmt);
 
     mysqli_commit($conn);
+
     header("Location: ../pages/home.php?success=Transfer+completed");
     exit;
 
@@ -159,3 +194,4 @@ try {
     mysqli_rollback($conn);
     die("Transfer failed: " . $e->getMessage());
 }
+?>

@@ -1,0 +1,170 @@
+/* Stats Cards */
+.stats-wrapper {
+    width: 100%;
+    margin: 18px 0 10px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.stat-box {
+    flex: 1 1 180px;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    border-top: 3px solid #2c3799;
+}
+
+.stat-box h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.stat-box p {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+}
+
+/* ---- Section title ---- */
+.section-title {
+    margin: 22px 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* ---- Tab Buttons ---- */
+.tab-card {
+    margin: 0 0 10px;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-card {
+    margin: 0 0 10px;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-buttons button {
+    border-radius: 20px;
+    border: 1px solid #dcdde1;
+    background: #f5f6fa;
+    padding: 7px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    box-shadow: none;
+}
+
+.tab-buttons .active-tab {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+    box-shadow: none;
+}
+
+.section-card {
+    width: 100%;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
+}
+
+/* Table */
+.ui-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.ui-table thead th {
+    background: #f5f6fa;
+    padding: 10px 8px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ui-table tbody td {
+    padding: 9px 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ui-table tbody tr:hover {
+    background: #f1f9ff;
+}
+
+/* Status Pills */
+.status,
+.status-pending {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Pending */
+.status-pending,
+.status.pending {
+    background: #fff6c5;
+    color: #c29d0b;
+}
+
+/* Active */
+.status.active {
+    background: #e0f8e8;
+    color: #2e8b57;
+}
+
+/* Declined / Closed */
+.status.declined,
+.status.closed {
+    background: #ffe0e0;
+    color: #c0392b;
+}
+
+/*  Approve / Decline Buttons */
+.btn-approve,
+.btn-decline {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.btn-approve {
+    background: #27ae60;
+    color: #fff;
+}
+.btn-approve:hover {
+    background: #219150;
+}
+
+.btn-decline {
+    background: #e74c3c;
+    color: #fff;
+}
+.btn-decline:hover {
+    background: #c0392b;
+}
