@@ -70,7 +70,7 @@ if ($isAdmin) {
 
 $result = mysqli_query($conn, $sql);
 ?>
-
+<link rel="stylesheet" href="../css/transaction.css">
 <h3 class="page-title">
     <?php echo $isAdmin ? "All Transactions" : "Your Transactions"; ?>
 </h3>
@@ -118,51 +118,3 @@ $result = mysqli_query($conn, $sql);
 
 <?php include '../includes/footer.php'; ?>
 
-<style>
-.page-title {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 25px;
-    margin-bottom: 15px;
-    color: #003b95;
-}
-
-.transactions-container {
-    max-width: 1000px;
-    margin: 20px auto 40px;
-    background: #ffffff;
-    padding: 20px 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.transactions-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.transactions-table th,
-.transactions-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #e0e0e0;
-    text-align: left;
-}
-
-.transactions-table th {
-    background: #f4f6fb;
-    font-weight: 600;
-}
-
-.transactions-table tr:hover {
-    background: #f9fbff;
-}
-
-.no-data {
-    text-align: center;
-    padding: 20px 0;
-    font-size: 14px;
-    opacity: 0.8;
-}
-</style>
