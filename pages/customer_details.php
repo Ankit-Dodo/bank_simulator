@@ -57,15 +57,49 @@ include("../includes/header.php");
         <label>Address:</label>
         <textarea name="address" required minlength="10" maxlength="255"><?= htmlspecialchars($address) ?></textarea>
 
+        <label>Select Country:</label>
+        <select id="countrySelect" name="country" required>
+            <option value="">Loading countries...</option>
+        </select>
         <label>Phone Number:</label>
-        <input type="text" name="phone" required
+        <input type="text" name="phone" 
+               required 
                value="<?= htmlspecialchars($phone) ?>"
                pattern="[0-9]{10}"
                title="Phone number must be exactly 10 digits."
                maxlength="10">
+        
+
 
         <button type="submit">Next</button>
     </form>
 </div>
+<script>
+async function loadCountries() {
+    try {
+        const res = await fetch("https://api.first.org/data/v1/countries");
+        const data = await res.json();
+        const countrySelect = document.getElementById("countrySelect");
+
+        countrySelect.innerHTML = "<option value=''>-- Select Country --</option>";
+
+        for (const code in data.data) {
+            const country = data.data[code].country;
+            const option = document.createElement("option");
+            option.value = country;
+            option.textContent = country;
+            countrySelect.appendChild(option);
+        }
+
+    } catch (err) {
+        console.error("Error loading countries:", err);
+        document.getElementById("countrySelect").innerHTML =
+            "<option value=''>Unable to load countries</option>";
+    }
+}
+
+loadCountries();
+</script>
+
 
 <?php include("../includes/footer.php"); ?>

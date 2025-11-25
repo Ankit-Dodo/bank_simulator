@@ -63,6 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     Add Details
                 </a>
 
+                <a href="../pages/customer_details.php">
+                    <img src="../images/edit.png" alt="Edit Icon" class="dropdown-icon">
+                    edit Details
+                </a>
+
                 <a href="../actions/logout.php" class="logout-option">
                     <img src="../images/quit.png" alt="Logout Icon" class="dropdown-icon">
                     Logout

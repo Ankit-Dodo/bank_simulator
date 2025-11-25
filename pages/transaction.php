@@ -25,8 +25,10 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($row['role']) === 'admin');
 }
 
-// Admin = all transactions
-// User  = only their accounts' transactions
+//    ADMIN: See all transactions
+//    USER : See only their own account transactions
+
+
 if ($isAdmin) {
     $sql = "
         SELECT 
@@ -39,11 +41,13 @@ if ($isAdmin) {
             t.performed_by,
             a.account_number,
             p.full_name,
-            u.username
+            u.username,
+            pu.username AS performed_by_username
         FROM `transaction` t
         JOIN account a ON t.account_id = a.id
         JOIN profile p ON a.profile_id = p.id
-        JOIN users u ON p.user_id = u.id
+        JOIN users u ON p.user_id = u.id             -- account owner
+        JOIN users pu ON t.performed_by = pu.id      -- performer
         ORDER BY t.transaction_date DESC
     ";
 } else {
@@ -58,11 +62,13 @@ if ($isAdmin) {
             t.performed_by,
             a.account_number,
             p.full_name,
-            u.username
+            u.username,
+            pu.username AS performed_by_username
         FROM `transaction` t
         JOIN account a ON t.account_id = a.id
         JOIN profile p ON a.profile_id = p.id
-        JOIN users u ON p.user_id = u.id
+        JOIN users u ON p.user_id = u.id             -- account owner
+        JOIN users pu ON t.performed_by = pu.id      -- performer
         WHERE u.id = $userId
         ORDER BY t.transaction_date DESC
     ";
@@ -70,18 +76,22 @@ if ($isAdmin) {
 
 $result = mysqli_query($conn, $sql);
 ?>
+
 <link rel="stylesheet" href="../css/transaction.css">
+
 <h3 class="page-title">
-    <?php echo $isAdmin ? "All Transactions" : "Your Transactions"; ?>
+    <?= $isAdmin ? "All Transactions" : "Your Transactions"; ?>
 </h3>
 
 <div class="transactions-container">
     <?php if (!$result): ?>
         <div class="no-data">
-            SQL Error: <?php echo htmlspecialchars(mysqli_error($conn)); ?>
+            SQL Error: <?= htmlspecialchars(mysqli_error($conn)); ?>
         </div>
+
     <?php elseif (mysqli_num_rows($result) === 0): ?>
         <div class="no-data">No transactions found.</div>
+
     <?php else: ?>
         <table class="transactions-table">
             <thead>
@@ -94,21 +104,25 @@ $result = mysqli_query($conn, $sql);
                     <th>Type</th>
                     <th>Status</th>
                     <th>Date &amp; Time</th>
-                    <th>Performed By (User ID)</th>
+                    <th>Performed By</th>
                 </tr>
             </thead>
+
             <tbody>
                 <?php while ($row = mysqli_fetch_assoc($result)): ?>
                     <tr>
-                        <td><?php echo (int)$row['id']; ?></td>
-                        <td><?php echo htmlspecialchars($row['account_number']); ?></td>
-                        <td><?php echo htmlspecialchars($row['full_name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['username']); ?></td>
-                        <td>Rs.<?php echo number_format((float)$row['amount'], 2); ?></td>
-                        <td><?php echo htmlspecialchars(ucfirst($row['transaction_type'])); ?></td>
-                        <td><?php echo htmlspecialchars($row['status']); ?></td>
-                        <td><?php echo htmlspecialchars($row['transaction_date']); ?></td>
-                        <td><?php echo (int)$row['performed_by']; ?></td>
+                        <td><?= (int)$row['id']; ?></td>
+                        <td><?= htmlspecialchars($row['account_number']); ?></td>
+                        <td><?= htmlspecialchars($row['full_name']); ?></td>
+                        <td><?= htmlspecialchars($row['username']); ?></td>
+                        <td>Rs.<?= number_format((float)$row['amount'], 2); ?></td>
+                        <td><?= htmlspecialchars(ucfirst($row['transaction_type'])); ?></td>
+                        <td><?= htmlspecialchars($row['status']); ?></td>
+                        <td><?= htmlspecialchars($row['transaction_date']); ?></td>
+
+                        <td>
+                            <?= htmlspecialchars($row['performed_by_username']); ?>
+                        </td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -117,4 +131,3 @@ $result = mysqli_query($conn, $sql);
 </div>
 
 <?php include '../includes/footer.php'; ?>
-

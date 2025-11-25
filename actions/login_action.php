@@ -42,8 +42,7 @@ if (!password_verify($password, $user['password_hash'])) {
 $_SESSION['user_id']   = $user['id'];
 $_SESSION['user_role'] = $user['role'];
 $_SESSION['email']     = $user['email'];
-$_SESSION['username']  = $user['username'];  // <-- IMPORTANT FIX
-
+$_SESSION['username']  = $user['username']; 
 // Redirect
 header("Location: ../pages/home.php");
 exit;

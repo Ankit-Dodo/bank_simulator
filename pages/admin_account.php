@@ -94,11 +94,11 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 <!-- TAB BUTTONS -->
 <div class="tab-card">
     <div class="tab-buttons">
-        <button type="button" onclick="showAdminTab('pending')" id="btn-tab-pending" class="active-tab">
+        <button type="button" onclick="showAdminTab('pending')" id="btn-tab-pending">
             Pending Requests
         </button>
 
-        <button type="button" onclick="showAdminTab('all')" id="btn-tab-all">
+        <button type="button" onclick="showAdminTab('all')" id="btn-tab-all" class="active-tab">
             All Accounts
         </button>
     </div>
@@ -106,7 +106,7 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 
 
 <!-- PENDING ACCOUNTS TAB -->
-<div id="admin-tab-pending" class="section-card">
+<div id="admin-tab-pending" class="section-card" style="display:none;">
 
 <?php if ($pendingRes && mysqli_num_rows($pendingRes) > 0): ?>
 
@@ -157,7 +157,7 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 
 
 <!-- ALL ACCOUNTS TAB -->
-<div id="admin-tab-all" class="section-card" style="display:none;">
+<div id="admin-tab-all" class="section-card" >
 
 <?php if ($accountsRes && mysqli_num_rows($accountsRes) > 0): ?>
 
@@ -174,6 +174,7 @@ $accountsRes = mysqli_query($conn, $accountsSql);
             <th>Date</th>
             <th>Balance</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
 
