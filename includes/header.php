@@ -41,7 +41,13 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="content">
 
 <div class="top-container">
-    <img class="logo" src="../images/logo.png" alt="logo">
+    <a href="<?=
+        !empty($_SESSION['user_id'])
+            ? '../pages/home.php'
+            : '../pages/login.php';
+        ?>">
+        <img class="logo" src="../images/logo.png" alt="logo">
+    </a>
     <h2>Indian Bank</h2>
 
     <?php if (!empty($_SESSION['user_id'])): ?>

@@ -27,7 +27,7 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
 }
 
 // ---------- Read & validate input ----------
-$from_account_id_raw = $_POST['from_account_id'] ?? '';
+$from_account_id_raw = $_POST['from_id'] ?? '';
 $amount      = trim($_POST['amount'] ?? '');
 $acc         = trim($_POST['account_number'] ?? '');
 $acc_confirm = trim($_POST['confirm_account_number'] ?? '');
@@ -64,19 +64,19 @@ if ($acc_digits === '' || strlen($acc_digits) < 6 || strlen($acc_digits) > 20) {
 if ($isAdmin) {
     // Admin: any active account by ID
     $senderSql = "
-        SELECT a.account_id, a.balance, a.min_balance, a.status
+        SELECT a.id, a.balance, a.min_balance, a.status
         FROM account a
-        WHERE a.account_id = $from_account_id
+        WHERE a.id = $from_account_id
         LIMIT 1
     ";
 } else {
     // Customer: sender account must belong to them
     $senderSql = "
-        SELECT a.account_id, a.balance, a.min_balance, a.status
+        SELECT a.id, a.balance, a.min_balance, a.status
         FROM account a
         JOIN profile p ON a.profile_id = p.id
         WHERE p.user_id = $user_id
-          AND a.account_id = $from_account_id
+          AND a.id = $from_account_id
         LIMIT 1
     ";
 }
@@ -93,7 +93,7 @@ if (!$senderRes || mysqli_num_rows($senderRes) === 0) {
 
 $sender = mysqli_fetch_assoc($senderRes);
 
-$sender_account_id = (int)$sender['account_id'];
+$sender_account_id = (int)$sender['id'];
 $sender_balance    = (int)$sender['balance'];
 $sender_min        = (int)$sender['min_balance'];
 
@@ -108,7 +108,7 @@ if ($new_sender_balance < $sender_min) {
 
 // ---------- Find RECEIVER account ----------
 $receiverSql = "
-    SELECT account_id, balance, status
+    SELECT id, balance, status
     FROM account
     WHERE account_number = ?
     LIMIT 1
@@ -128,7 +128,7 @@ if (!$receiverRes || mysqli_num_rows($receiverRes) === 0) {
 
 $receiver = mysqli_fetch_assoc($receiverRes);
 
-$receiver_account_id = (int)$receiver['account_id'];
+$receiver_account_id = (int)$receiver['id'];
 
 if (strtolower($receiver['status']) !== 'active') {
     die("Receiver account is not active.");
@@ -147,7 +147,7 @@ try {
     $updateSenderSql = "
         UPDATE account
         SET balance = balance - $amount_int
-        WHERE account_id = $sender_account_id
+        WHERE id = $sender_account_id
     ";
     if (!mysqli_query($conn, $updateSenderSql) || mysqli_affected_rows($conn) !== 1) {
         throw new Exception("Failed to deduct from sender account: " . mysqli_error($conn));
@@ -168,7 +168,7 @@ try {
     $updateReceiverSql = "
         UPDATE account
         SET balance = balance + $amount_int
-        WHERE account_id = $receiver_account_id
+        WHERE id = $receiver_account_id
     ";
     if (!mysqli_query($conn, $updateReceiverSql) || mysqli_affected_rows($conn) !== 1) {
         throw new Exception("Failed to credit receiver account: " . mysqli_error($conn));

@@ -36,7 +36,7 @@ CREATE TABLE profile (
 -- TABLE: account
 DROP TABLE IF EXISTS account;
 CREATE TABLE account (
-    account_id BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     profile_id BIGINT NOT NULL,
     account_type ENUM('savings', 'current', 'salary') NOT NULL,
     account_number BIGINT NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE account (
     status ENUM('Active', 'Pending') NOT NULL,
     ifsc_code VARCHAR(20) NOT NULL DEFAULT 'INDB0000323',
     account_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (account_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (profile_id) REFERENCES profile(id)
         ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -90,7 +90,7 @@ INSERT INTO profile (id, user_id, full_name, DOB, phone, Address) VALUES
 
 
 --  Account table Data
-INSERT INTO account (account_id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
+INSERT INTO account (id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
 (1, 1, 'savings', 5510894543, 190, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
 (3, 1, 'savings', 1604531907, 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
 (8, 4, 'current', 5040695771, 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),

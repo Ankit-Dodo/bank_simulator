@@ -27,7 +27,7 @@ if ($isAdmin) {
     // Admin: all active accounts
     $sql = "
         SELECT 
-            a.account_id,
+            a.id,
             a.account_number,
             a.account_type,
             a.balance,
@@ -43,7 +43,7 @@ if ($isAdmin) {
     // Customer: only their own active accounts
     $sql = "
         SELECT 
-            a.account_id,
+            a.id,
             a.account_number,
             a.account_type,
             a.balance,
@@ -78,11 +78,11 @@ include "../includes/header.php";
     <?php else: ?>
         <form id="withdrawForm" method="post" action="../actions/withdraw_action.php">
             <div class="form-group">
-                <label for="from_account_id">From Account</label>
-                <select id="from_account_id" name="from_account_id" required>
+                <label for="from_id">From Account</label>
+                <select id="from_id" name="from_id" required>
                     <option value="">-- Select Account --</option>
                     <?php foreach ($accounts as $acc): ?>
-                        <option value="<?= (int)$acc['account_id'] ?>">
+                        <option value="<?= (int)$acc['id'] ?>">
                             <?= htmlspecialchars($acc['account_number']) ?>
                             - <?= htmlspecialchars($acc['account_type']) ?>
                             (₹<?= number_format((float)$acc['balance'], 2) ?>)
@@ -107,7 +107,7 @@ include "../includes/header.php";
 document.getElementById('withdrawForm')?.addEventListener('submit', function(event) {
     let isValid = true;
 
-    const fromAccount = document.getElementById('from_account_id');
+    const fromAccount = document.getElementById('from_id');
     const amountVal   = document.getElementById('amount').value.trim();
 
     const fromError = document.getElementById('fromAccountError');

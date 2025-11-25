@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /pages/login.php");
+    header("Location: ../pages/login.php");
     exit;
 }
 
@@ -25,8 +25,8 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($row['role']) === 'admin');
 }
 
-// Admin → all transactions
-// User  → only their accounts' transactions
+// Admin = all transactions
+// User  = only their accounts' transactions
 if ($isAdmin) {
     $sql = "
         SELECT 
@@ -41,7 +41,7 @@ if ($isAdmin) {
             p.full_name,
             u.username
         FROM `transaction` t
-        JOIN account a ON t.account_id = a.account_id
+        JOIN account a ON t.account_id = a.id
         JOIN profile p ON a.profile_id = p.id
         JOIN users u ON p.user_id = u.id
         ORDER BY t.transaction_date DESC
@@ -60,7 +60,7 @@ if ($isAdmin) {
             p.full_name,
             u.username
         FROM `transaction` t
-        JOIN account a ON t.account_id = a.account_id
+        JOIN account a ON t.account_id = a.id
         JOIN profile p ON a.profile_id = p.id
         JOIN users u ON p.user_id = u.id
         WHERE u.id = $userId

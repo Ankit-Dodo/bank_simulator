@@ -29,7 +29,7 @@ $totalUsers = (int)mysqli_fetch_assoc($totalUsersRes)['total_users'];
 
 //  PENDING ACCOUNTS 
 $pendingSql = "
-    SELECT a.account_id, a.account_number, a.account_type, a.balance, a.status,
+    SELECT a.id, a.account_number, a.account_type, a.balance, a.status,
            a.min_balance, a.ifsc_code, a.account_date,
            p.full_name, p.phone,
            u.username, u.email
@@ -43,14 +43,14 @@ $pendingRes = mysqli_query($conn, $pendingSql);
 
 //  ALL ACCOUNTS 
 $accountsSql = "
-    SELECT a.account_id, a.account_number, a.account_type, a.balance, a.status,
+    SELECT a.id, a.account_number, a.account_type, a.balance, a.status,
            a.ifsc_code, a.account_date,
            p.full_name, p.phone,
            u.username, u.email
     FROM account a
     JOIN profile p ON a.profile_id = p.id
     JOIN users u ON p.user_id = u.id
-    ORDER BY a.account_id DESC
+    ORDER BY a.id DESC
 ";
 $accountsRes = mysqli_query($conn, $accountsSql);
 
@@ -141,8 +141,8 @@ $accountsRes = mysqli_query($conn, $accountsSql);
             <td><?= number_format($row['balance'], 2) ?></td>
             <td><span class="status-pending">Pending</span></td>
             <td>
-                <a class="btn-approve" href="../actions/approve_account.php?id=<?= $row['account_id'] ?>">Approve</a>
-                <a class="btn-decline" href="../actions/decline_account.php?id=<?= $row['account_id'] ?>">Decline</a>
+                <a class="btn-approve" href="../actions/approve_account.php?id=<?= $row['id'] ?>">Approve</a>
+                <a class="btn-decline" href="../actions/decline_account.php?id=<?= $row['id'] ?>">Decline</a>
             </td>
         </tr>
         <?php endwhile; ?>

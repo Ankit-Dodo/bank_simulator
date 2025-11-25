@@ -61,7 +61,7 @@ if ($acc_digits === '') {
 $acc_esc = mysqli_real_escape_string($conn, $acc_digits);
 
 $sql = "
-    SELECT a.account_id, a.balance, a.status
+    SELECT a.id, a.balance, a.status
     FROM account a
     WHERE a.account_number = '$acc_esc'
     LIMIT 1
@@ -74,7 +74,7 @@ if (!$result || mysqli_num_rows($result) === 0) {
 }
 
 $account    = mysqli_fetch_assoc($result);
-$account_id = (int)$account['account_id'];
+$account_id = (int)$account['id'];
 
 if (strtolower($account['status']) !== 'active') {
     die("Account is not active.");
@@ -82,7 +82,7 @@ if (strtolower($account['status']) !== 'active') {
 $updateSql = "
     UPDATE account
     SET balance = balance + $amount_int
-    WHERE account_id = $account_id
+    WHERE id = $account_id
 ";
 
 if (!mysqli_query($conn, $updateSql)) {

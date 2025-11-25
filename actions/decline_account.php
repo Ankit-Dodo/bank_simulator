@@ -14,7 +14,7 @@ if (empty($_GET['id'])) {
 
 $account_id = (int)$_GET['id'];
 
-$sql = "DELETE FROM account WHERE account_id = ? AND status = 'Pending'";
+$sql = "DELETE FROM account WHERE id = ? AND status = 'Pending'";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $account_id);
 

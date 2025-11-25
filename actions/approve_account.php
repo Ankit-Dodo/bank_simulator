@@ -10,7 +10,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $account_id = (int)$_GET['id'];
 
 // SQL to update the account status to 'Active'
-$sql = "UPDATE account SET status = 'Active' WHERE account_id = ? AND status = 'Pending'";
+$sql = "UPDATE account SET status = 'Active' WHERE id = ? AND status = 'Pending'";
 
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $account_id);
