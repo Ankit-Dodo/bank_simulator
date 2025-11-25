@@ -5,7 +5,7 @@
 
         <div class="footer-section">
             <h4>
-            <img src="../images/map.png" alt="Location Icon" >    
+            <img src="../images/map-circle.png" alt="Location Icon" >    
             Location</h4>
             <p>Indian Bank Headquarters<br>
             Near XYZ, New Delhi, India</p>
@@ -32,7 +32,7 @@
 
     <hr class="footer-line">
 
-    <p class="footer-copy">© <?php echo date("Y"); ?> Indian Bank — All Rights Reserved</p>
+    <p class="footer-copy">© 2025 Indian Bank — All Rights Reserved</p>
 </footer>
 
 </div> 

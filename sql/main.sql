@@ -102,10 +102,17 @@ INSERT INTO account (id, profile_id, account_type, account_number, balance, min_
 (16, 7, 'salary', 9198726596, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 14:33:37');
 
 
-INSERT INTO `transaction` 
+INSERT INTO `transaction`
 (id, account_id, transaction_type, amount, transaction_date, performed_by, status) VALUES
 (1, 3, 'deposit', 500, '2025-11-24 11:40:53', 1, 'completed'),
 (2, 3, 'deposit', 500, '2025-11-24 11:41:10', 1, 'completed'),
 (3, 3, 'withdraw', 100, '2025-11-24 11:41:47', 1, 'completed'),
 (4, 3, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
-(5, 11, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed');
+(5, 11, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
+(6, 8, 'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
+(7, 9, 'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
+(8, 9, 'withdraw', 100, '2025-11-25 09:35:38', 6, 'completed'),
+(9, 3, 'withdraw', 100, '2025-11-25 10:07:56', 1, 'completed'),
+(10, 10, 'deposit', 500, '2025-11-25 10:25:31', 1, 'completed'),
+(11, 3, 'transfer', 200, '2025-11-25 10:27:03', 1, 'completed'),
+(12, 10, 'transfer', 200, '2025-11-25 10:27:03', 1, 'completed');

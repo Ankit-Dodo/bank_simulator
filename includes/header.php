@@ -2,9 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// Always read username from session
-// Login_action.php must set: $_SESSION['username'] = $user['username'];
+// reading username from session
 $username = $_SESSION['username'] ?? 'User';
 ?>
 <!DOCTYPE html>

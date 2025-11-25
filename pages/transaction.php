@@ -104,7 +104,7 @@ $result = mysqli_query($conn, $sql);
                         <td><?php echo htmlspecialchars($row['account_number']); ?></td>
                         <td><?php echo htmlspecialchars($row['full_name']); ?></td>
                         <td><?php echo htmlspecialchars($row['username']); ?></td>
-                        <td>₹<?php echo number_format((float)$row['amount'], 2); ?></td>
+                        <td>Rs.<?php echo number_format((float)$row['amount'], 2); ?></td>
                         <td><?php echo htmlspecialchars(ucfirst($row['transaction_type'])); ?></td>
                         <td><?php echo htmlspecialchars($row['status']); ?></td>
                         <td><?php echo htmlspecialchars($row['transaction_date']); ?></td>
