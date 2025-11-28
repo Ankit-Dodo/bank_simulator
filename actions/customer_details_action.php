@@ -18,19 +18,19 @@ $dob       = trim($_POST['dob'] ?? '');
 $address   = trim($_POST['address'] ?? '');
 $phone     = trim($_POST['phone'] ?? '');
 
-// ---------------- USER ID CHECK ----------------
+//  USER ID CHECK 
 if ($uid <= 0) {
     $errors[] = "Invalid session. Please log in again.";
 }
 
-// ---------------- FULL NAME ----------------
+//  FULL NAME 
 if (empty($full_name)) {
     $errors[] = "Full Name is required.";
 } elseif (strlen($full_name) > 255) {
     $errors[] = "Full Name is too long.";
 }
 
-// ---------------- DATE OF BIRTH ----------------
+//  DATE OF BIRTH 
 if (empty($dob)) {
     $errors[] = "Date of Birth is required.";
 } else {
@@ -40,21 +40,21 @@ if (empty($dob)) {
     }
 }
 
-// ---------------- ADDRESS ----------------
+//  ADDRESS 
 if (empty($address)) {
     $errors[] = "Address is required.";
 } elseif (strlen($address) > 500) {
     $errors[] = "Address is too long.";
 }
 
-// ---------------- PHONE ----------------
+//  PHONE 
 if (empty($phone)) {
     $errors[] = "Phone number is required.";
 } elseif (!preg_match('/^\d{10}$/', $phone)) {
     $errors[] = "Phone number must be exactly 10 digits.";
 }
 
-// ---------------- ON ERROR ----------------
+//  ON ERROR 
 if (!empty($errors)) {
     echo "<div style='color:red; font-size:14px;'>";
     foreach ($errors as $e) echo $e . "<br>";
@@ -62,13 +62,13 @@ if (!empty($errors)) {
     exit;
 }
 
-// ---------------- ESCAPE VALUES ----------------
+//  ESCAPE VALUES 
 $full_name_esc = mysqli_real_escape_string($conn, $full_name);
 $dob_esc       = mysqli_real_escape_string($conn, $dob);
 $address_esc   = mysqli_real_escape_string($conn, $address);
 $phone_esc     = mysqli_real_escape_string($conn, $phone);
 
-// ---------------- CHECK IF PROFILE EXISTS ----------------
+//  CHECK IF PROFILE EXISTS 
 $checkSql = "SELECT id FROM profile WHERE user_id = $uid LIMIT 1";
 $checkRes = mysqli_query($conn, $checkSql);
 

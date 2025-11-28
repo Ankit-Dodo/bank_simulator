@@ -109,7 +109,6 @@ if ($queryError === null && $totalRows > 0) {
         $queryError = mysqli_error($conn);
     }
 }
-
 ?>
 
 <link rel="stylesheet" href="../css/transaction.css">
@@ -120,17 +119,30 @@ if ($queryError === null && $totalRows > 0) {
 
 <div class="transactions-container">
 
-    <!-- SEARCH BAR -->
-    <form method="GET" class="search-bar" style="margin-bottom: 15px;">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search by account holder name..."
-            value="<?= htmlspecialchars($search) ?>"
-        >
-        <button type="submit">Search</button>
-        <input type="hidden" name="page" value="1">
-    </form>
+   <!-- SEARCH + GO BACK ROW (Same container) -->
+    <div class="search-row">
+
+        <!-- LEFT → Go Back button (only when search is active) -->
+        <?php if ($search !== ""): ?>
+            <a href="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" class="back-btn">← Go Back</a>
+        <?php else: ?>
+            <div></div> 
+        <?php endif; ?>
+
+        <!-- RIGHT → Search bar -->
+        <form method="GET" class="search-bar">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search by account holder name..."
+                value="<?= htmlspecialchars($search) ?>"
+            >
+            <button type="submit">Search</button>
+            <input type="hidden" name="page" value="1">
+        </form>
+
+    </div>
+
 
     <?php if ($queryError !== null): ?>
 

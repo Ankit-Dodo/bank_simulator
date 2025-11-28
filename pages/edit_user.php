@@ -48,12 +48,12 @@ $errorMsg   = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    //  "Load User"
+    //  LOAD USER
     if (isset($_POST['load_user'])) {
         $selectedUserId = (int)($_POST['user_id'] ?? 0);
     }
 
-    //  "Save Changes"
+    //  SAVE USER CHANGES
     if (isset($_POST['save_user'])) {
         $selectedUserId = (int)($_POST['edit_user_id'] ?? 0);
 
@@ -65,22 +65,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirmPass = trim($_POST['confirm_password'] ?? '');
         $user_status = trim($_POST['user_status'] ?? 'Active');
 
-        // normalize status
         $user_status = ucfirst(strtolower($user_status));
         if (!in_array($user_status, ['Active', 'Inactive'], true)) {
             $user_status = 'Active';
         }
 
+        // BACKEND VALIDATIONS
         if ($selectedUserId <= 0) {
             $errorMsg = "Invalid user selected.";
         } elseif ($full_name === '' || $email === '') {
             $errorMsg = "Full name and email are required.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errorMsg = "Invalid email format.";
+        } elseif ($phone !== '' && !preg_match('/^[0-9]{10}$/', $phone)) {
+            $errorMsg = "Phone number must be exactly 10 digits.";
         } elseif ($newPass !== '' && $newPass !== $confirmPass) {
             $errorMsg = "New password and confirm password do not match.";
         } else {
-            // Update users table 
+
+            // UPDATE users
             $emailEsc  = mysqli_real_escape_string($conn, $email);
             $statusEsc = mysqli_real_escape_string($conn, $user_status);
 
@@ -108,12 +111,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!mysqli_query($conn, $userUpdateSql)) {
                 $errorMsg = "Failed to update user: " . mysqli_error($conn);
             } else {
-                // Update profile table (full_name, phone, address)
+
+                // UPDATE / INSERT profile
                 $fullEsc  = mysqli_real_escape_string($conn, $full_name);
                 $phoneEsc = mysqli_real_escape_string($conn, $phone);
                 $addrEsc  = mysqli_real_escape_string($conn, $address);
 
-                // If profile row exists -> update, else insert
                 $checkProfileSql = "SELECT id FROM profile WHERE user_id = $selectedUserId LIMIT 1";
                 $profRes = mysqli_query($conn, $checkProfileSql);
 
@@ -141,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// selected user current data
+// load selected user
 if ($selectedUserId) {
     $editSql = "
         SELECT 
@@ -157,11 +160,12 @@ if ($selectedUserId) {
         WHERE u.id = $selectedUserId
         LIMIT 1
     ";
+
     $editRes = mysqli_query($conn, $editSql);
     if ($editRes && mysqli_num_rows($editRes) === 1) {
         $editUser = mysqli_fetch_assoc($editRes);
     } else {
-        $errorMsg = $errorMsg ?: "Selected user not found.";
+        $errorMsg = "Selected user not found.";
     }
 }
 
@@ -170,24 +174,27 @@ include "../includes/header.php";
 
 <h3 class="page-title-center">Manage Accounts / Users - Edit User Details</h3>
 
-<div class="form-container-center" style="max-width: 600px; margin: 0 auto;">
+<div class="form-container-center admin-edit-container">
 
     <?php if ($errorMsg): ?>
-        <p class="error-message" style="color:red;"><?= htmlspecialchars($errorMsg) ?></p>
+        <p class="admin-edit-error"><?= htmlspecialchars($errorMsg) ?></p>
     <?php endif; ?>
 
     <?php if ($successMsg): ?>
+        <div class="flash-message success admin-edit-flash">
+            <?= htmlspecialchars($successMsg) ?>
+        </div>
         <script>
-            alert("<?= htmlspecialchars($successMsg) ?>");
-            window.location.href = "../pages/home.php";
+            setTimeout(() => {
+                window.location.href = "../pages/home.php";
+            }, 2500);
         </script>
     <?php endif; ?>
 
-
     <!-- Select user dropdown -->
-    <form method="post" style="margin-bottom: 20px;">
-        <label for="user_id"><strong>Select User</strong></label>
-        <select name="user_id" id="user_id" required>
+    <form method="post" class="admin-edit-select-form">
+        <label for="user_id" class="admin-edit-label"><strong>Select User</strong></label>
+        <select name="user_id" id="user_id" required class="admin-edit-select">
             <option value="">-- Choose User --</option>
             <?php foreach ($users as $u): ?>
                 <option value="<?= (int)$u['id'] ?>" <?= ($selectedUserId == (int)$u['id']) ? 'selected' : '' ?>>
@@ -198,12 +205,12 @@ include "../includes/header.php";
                 </option>
             <?php endforeach; ?>
         </select>
-        <button type="submit" name="load_user" class="btn-primary" style="margin-top:10px;">Load User</button>
+        <button type="submit" name="load_user" class="btn-primary admin-edit-load-btn">Load User</button>
     </form>
 
     <?php if ($editUser): ?>
         <!-- Edit user details form -->
-        <form method="post">
+        <form method="post" id="editUserForm" class="admin-edit-form">
             <input type="hidden" name="edit_user_id" value="<?= (int)$editUser['id'] ?>">
 
             <div class="form-group">
@@ -220,6 +227,7 @@ include "../includes/header.php";
                     value="<?= htmlspecialchars($editUser['full_name']) ?>"
                     required
                 >
+                <span class="error-message" id="fullNameError"></span>
             </div>
 
             <div class="form-group">
@@ -231,6 +239,7 @@ include "../includes/header.php";
                     value="<?= htmlspecialchars($editUser['email']) ?>"
                     required
                 >
+                <span class="error-message" id="emailError"></span>
             </div>
 
             <div class="form-group">
@@ -241,6 +250,7 @@ include "../includes/header.php";
                     name="phone"
                     value="<?= htmlspecialchars($editUser['phone']) ?>"
                 >
+                <span class="error-message" id="phoneError"></span>
             </div>
 
             <div class="form-group">
@@ -261,6 +271,7 @@ include "../includes/header.php";
                     <option value="Active"   <?= $currentStatus === 'Active'   ? 'selected' : '' ?>>Active</option>
                     <option value="Inactive" <?= $currentStatus === 'Inactive' ? 'selected' : '' ?>>Inactive</option>
                 </select>
+                <span class="error-message" id="statusError"></span>
             </div>
 
             <hr>
@@ -273,6 +284,7 @@ include "../includes/header.php";
                     name="new_password"
                     autocomplete="new-password"
                 >
+                <span class="error-message" id="newPasswordError"></span>
             </div>
 
             <div class="form-group">
@@ -283,6 +295,7 @@ include "../includes/header.php";
                     name="confirm_password"
                     autocomplete="new-password"
                 >
+                <span class="error-message" id="confirmPasswordError"></span>
             </div>
 
             <button type="submit" name="save_user" class="btn-primary">Save Changes</button>
@@ -290,5 +303,94 @@ include "../includes/header.php";
     <?php endif; ?>
 
 </div>
+
+<script>
+const form = document.getElementById("editUserForm");
+
+if (form) {
+    const fullNameInput = document.getElementById("full_name");
+    const emailInput    = document.getElementById("email");
+    const phoneInput    = document.getElementById("phone");
+    const statusSelect  = document.getElementById("user_status");
+    const newPassInput  = document.getElementById("new_password");
+    const confPassInput = document.getElementById("confirm_password");
+
+    const errFull  = document.getElementById("fullNameError");
+    const errEmail = document.getElementById("emailError");
+    const errPhone = document.getElementById("phoneError");
+    const errStat  = document.getElementById("statusError");
+    const errNew   = document.getElementById("newPasswordError");
+    const errConf  = document.getElementById("confirmPasswordError");
+
+    // Limit phone to 10 digits, digits only
+    phoneInput.addEventListener("input", function () {
+        let digits = phoneInput.value.replace(/\D/g, "");
+        phoneInput.value = digits.slice(0, 10);
+    });
+
+    function validate() {
+        let ok = true;
+
+        errFull.textContent  = "";
+        errEmail.textContent = "";
+        errPhone.textContent = "";
+        errStat.textContent  = "";
+        errNew.textContent   = "";
+        errConf.textContent  = "";
+
+        const fullVal   = fullNameInput.value.trim();
+        const emailVal  = emailInput.value.trim();
+        const phoneVal  = phoneInput.value.trim();
+        const statusVal = statusSelect.value.trim();
+        const p1        = newPassInput.value.trim();
+        const p2        = confPassInput.value.trim();
+
+        // full name
+        if (!fullVal || fullVal.length < 2) {
+            errFull.textContent = "Full name must be at least 2 characters.";
+            ok = false;
+        }
+
+        // email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailVal)) {
+            errEmail.textContent = "Invalid email format.";
+            ok = false;
+        }
+
+        // phone (optional, but if present must be exactly 10 digits)
+        if (phoneVal && phoneVal.length !== 10) {
+            errPhone.textContent = "Phone number must be exactly 10 digits.";
+            ok = false;
+        }
+
+        // status
+        if (statusVal !== "Active" && statusVal !== "Inactive") {
+            errStat.textContent = "Invalid status.";
+            ok = false;
+        }
+
+        // passwords (optional)
+        if (p1) {
+            if (p1.length < 6) {
+                errNew.textContent = "Password must be at least 6 characters.";
+                ok = false;
+            }
+            if (p1 !== p2) {
+                errConf.textContent = "Passwords do not match.";
+                ok = false;
+            }
+        }
+
+        return ok;
+    }
+
+    form.addEventListener("submit", function (e) {
+        if (!validate()) {
+            e.preventDefault();
+        }
+    });
+}
+</script>
 
 <?php include "../includes/footer.php"; ?>

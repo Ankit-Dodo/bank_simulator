@@ -88,3 +88,73 @@
     opacity: 0.7;
     margin-top: 12px;
 }
+
+/* Flash message (used across pages) */
+.flash-message {
+    width: 100%;
+    padding: 12px 18px;
+    margin: 15px 0;
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 600;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.flash-message.success {
+    background-color: #28a745;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   Admin Edit User Page (admin_edit_user.php)
+   ========================================================= */
+
+.admin-edit-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Top backend error message for admin edit page */
+.admin-edit-error {
+    color: #d63031;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Select user form (top dropdown) */
+.admin-edit-select-form {
+    margin-bottom: 20px;
+}
+
+.admin-edit-select {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    min-width: 230px;
+    font-size: 14px;
+}
+
+.admin-edit-load-btn {
+    margin-left: 8px;
+}
+
+/* Edit form error messages under each field */
+.admin-edit-form .error-message {
+    display: block;
+    color: #d63031;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Optional: small tweak to flash message spacing on this page */
+.admin-edit-flash {
+    margin-bottom: 15px;
+}
