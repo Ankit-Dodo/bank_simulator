@@ -108,7 +108,6 @@ if (!mysqli_query($conn, $logSql)) {
     die("Balance updated but failed to log transaction: " . mysqli_error($conn));
 }
 
-header("Location: ../pages/home.php?success=Withdraw+completed");
+header("Location: ../pages/withdraw.php?success=withdraw&amount=$amount_int");
 exit;
-
 ?>

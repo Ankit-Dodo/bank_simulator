@@ -98,6 +98,8 @@ $logSql = "
 if (!mysqli_query($conn, $logSql)) {
     die("Balance updated, but failed to log transaction: " . mysqli_error($conn));
 }
-header("Location: ../pages/home.php?success=Deposit+completed");
+
+// redirect back to deposit page with amount so popup can show it
+header("Location: ../pages/deposit.php?success=deposit&amount=" . urlencode($amount_int));
 exit;
 ?>

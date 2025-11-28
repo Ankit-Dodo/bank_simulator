@@ -6,6 +6,26 @@
 
 <h3>Deposit Money</h3>
 
+<?php if (isset($_GET['success']) && $_GET['success'] === 'deposit' && isset($_GET['amount'])): ?>
+
+<div class="flash-message" id="flashMsg">
+    Rs.<?= htmlspecialchars($_GET['amount']) ?> was successfully deposited!
+</div>
+
+<script>
+    setTimeout(() => {
+        const flash = document.getElementById('flashMsg');
+        if (flash) {
+            flash.classList.add('flash-hide');
+        }
+    }, 2500);
+    setTimeout(() => {
+        window.location.href = "/pages/deposit.php";
+    }, 3200);
+</script>
+
+<?php endif; ?>
+
 <form id="depositForm" method="post" action="../actions/deposit_action.php">
     
     <label for="amount">Amount:</label>
@@ -24,7 +44,7 @@
 </form>
 
 <script>
-// simple front-end validation
+// simple front-end validation + confirmation
 document.getElementById('depositForm').addEventListener('submit', function (e) {
     let valid = true;
 
@@ -64,11 +84,19 @@ document.getElementById('depositForm').addEventListener('submit', function (e) {
         confirmError.textContent = 'Account numbers do not match.';
         valid = false;
     }
-
+    // if invalid stop
     if (!valid) {
+        e.preventDefault();
+        return;
+    }
+
+    // confirmation
+    const ok = confirm('Are you sure you want to DEPOSIT this amount?');
+    if (!ok) {
         e.preventDefault();
     }
 });
 </script>
+
 
 <?php include("../includes/footer.php"); ?>

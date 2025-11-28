@@ -1,4 +1,30 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once "../config/db.php"; // uses $conn from db.php
+
+// --------- LOGIN CHECK ----------
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../pages/login.php");
+    exit;
+}
+
+$user_id = (int)$_SESSION['user_id'];
+
+// --------- ADMIN CHECK ----------
+$roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
+$roleRes = mysqli_query($conn, $roleSql);
+
+if (!$roleRes || mysqli_num_rows($roleRes) === 0) {
+    die("User not found.");
+}
+
+$roleRow = mysqli_fetch_assoc($roleRes);
+if (strtolower($roleRow['role'] ?? '') !== 'admin') {
+    die("Only admin can access this page.");
+}
 
 // Total accounts
 $totalAccountsSql = "SELECT COUNT(*) AS total_accounts FROM account";
@@ -40,8 +66,42 @@ $pendingSql = "
 ";
 $pendingRes = mysqli_query($conn, $pendingSql);
 
+// search
+$search = isset($_GET['search']) ? trim($_GET['search']) : "";
+$searchCondition = "";
 
-//  ALL ACCOUNTS 
+if ($search !== "") {
+    $searchEsc = mysqli_real_escape_string($conn, $search);
+    $searchCondition = "WHERE p.full_name LIKE '%$searchEsc%'";
+}
+
+// per-page
+$perPage = 10;
+
+// total rows (for pagination) with search filter
+$countSql = "
+    SELECT COUNT(*) AS total
+    FROM account a
+    JOIN profile p ON a.profile_id = p.id
+    $searchCondition
+";
+$countRes = mysqli_query($conn, $countSql);
+$totalAccountsList = (int)mysqli_fetch_assoc($countRes)['total'];
+
+$totalPages = max(1, (int)ceil($totalAccountsList / $perPage));
+
+// current page
+$page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0
+    ? (int)$_GET['page']
+    : 1;
+
+if ($page > $totalPages) {
+    $page = $totalPages;
+}
+
+$offset = ($page - 1) * $perPage;
+
+// ALL ACCOUNTS query (with pagination + search)
 $accountsSql = "
     SELECT a.id, a.account_number, a.account_type, a.balance, a.status,
            a.ifsc_code, a.account_date,
@@ -50,10 +110,11 @@ $accountsSql = "
     FROM account a
     JOIN profile p ON a.profile_id = p.id
     JOIN users u ON p.user_id = u.id
+    $searchCondition
     ORDER BY a.id DESC
+    LIMIT $perPage OFFSET $offset
 ";
 $accountsRes = mysqli_query($conn, $accountsSql);
-
 ?>
 
 <link rel="stylesheet" href="../css/admin.css">
@@ -88,8 +149,11 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 
 </div>
 
-
-<h4 class="section-title">Account Management</h4>
+<!-- Title row + manage users button -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0 5px 0;">
+    <h4 class="section-title" style="margin:0;">Manage Accounts / Users</h4>
+    <a href="../pages/edit_user.php" class="btn-secondary">Edit User Details</a>
+</div>
 
 <!-- TAB BUTTONS -->
 <div class="tab-card">
@@ -157,7 +221,19 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 
 
 <!-- ALL ACCOUNTS TAB -->
-<div id="admin-tab-all" class="section-card" >
+<div id="admin-tab-all" class="section-card">
+
+    <!-- SEARCH BAR -->
+    <form method="GET" class="search-bar">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by name..."
+            value="<?= htmlspecialchars($search) ?>"
+        >
+        <button type="submit">Search</button>
+        <input type="hidden" name="page" value="1">
+    </form>
 
 <?php if ($accountsRes && mysqli_num_rows($accountsRes) > 0): ?>
 
@@ -191,10 +267,47 @@ $accountsRes = mysqli_query($conn, $accountsSql);
             <td><?= $row['account_date'] ?></td>
             <td><?= number_format($row['balance'], 2) ?></td>
             <td><span class="status <?= strtolower($row['status']) ?>"><?= $row['status'] ?></span></td>
+            <td>
+                <a href="../actions/delete_account.php?id=<?= $row['id'] ?>"
+                   class="btn-delete"
+                   onclick="return confirm('Are you sure you want to delete this account? This action cannot be undone.');">
+                    Delete
+                </a>
+            </td>
         </tr>
         <?php endwhile; ?>
     </tbody>
 </table>
+
+<!-- PAGINATION -->
+<?php if ($totalPages > 1): ?>
+    <div class="pagination">
+        <!-- Previous button -->
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>" class="page-link">Prev</a>
+        <?php endif; ?>
+
+        <!-- Page numbers -->
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"
+               class="page-link <?= ($i === $page) ? 'active-page' : '' ?>">
+                <?= $i ?>
+            </a>
+        <?php endfor; ?>
+
+        <!-- Next button -->
+        <?php if ($page < $totalPages): ?>
+            <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>" class="page-link">Next</a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<!-- GO BACK BUTTON WHEN SEARCH IS ACTIVE -->
+<?php if ($search !== ""): ?>
+    <div class="back-box">
+        <a href="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" class="back-btn">Go Back</a>
+    </div>
+<?php endif; ?>
 
 <?php else: ?>
     <p>No accounts found.</p>

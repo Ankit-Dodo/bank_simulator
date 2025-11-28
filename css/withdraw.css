@@ -1,11 +1,11 @@
-form {
+/* form {
     max-width: 420px;
     margin: 25px auto;
     padding: 24px;
     border-radius: 12px;
     background: #ffffff;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
+} */
 
 /* ---------- Page Title ---------- */
 h3 {
@@ -28,7 +28,6 @@ form label {
 /* ---------- Inputs ---------- */
 form input[type="text"],
 form input[type="number"]{
-    width: 93%;
     padding: 10px 12px;
     margin-bottom: 16px;
     font-size: 15px;
@@ -71,3 +70,5 @@ form button:hover {
     margin-top: 4px;
     margin-bottom: 8px;
 }
+
+

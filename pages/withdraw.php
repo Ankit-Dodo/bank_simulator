@@ -67,8 +67,31 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 include "../includes/header.php";
 ?>
+<link rel="stylesheet" href="../css/withdraw.css">
 
 <h3 class="page-title-center">Withdraw Money</h3>
+
+<?php if (isset($_GET['success']) && $_GET['success'] === 'withdraw' && isset($_GET['amount'])): ?>
+
+<div class="flash-message" id="flashMsg">
+    ₹<?= htmlspecialchars($_GET['amount']) ?> was successfully withdrawn!
+</div>
+
+<script>
+    // fade-out animation
+    setTimeout(() => {
+        const flash = document.getElementById('flashMsg');
+        if (flash) flash.classList.add('flash-hide');
+    }, 2500);
+
+    // redirect after fade
+    setTimeout(() => {
+        window.location.href = "/pages/withdraw.php";
+    }, 3200);
+</script>
+
+<?php endif; ?>
+
 
 <div class="form-container-center">
     <?php if (empty($accounts)): ?>
@@ -93,7 +116,7 @@ include "../includes/header.php";
                 <span class="error-message" id="fromAccountError"></span>
             </div>
             <div class="form-group">
-                <label for="amount">Amount (₹)</label>
+                <label for="amount">Amount (Rs.)</label>
                 <input type="text" id="amount" name="amount" required>
                 <span class="error-message" id="amountError"></span>
             </div>
@@ -110,24 +133,35 @@ document.getElementById('withdrawForm')?.addEventListener('submit', function(eve
     const fromAccount = document.getElementById('from_id');
     const amountVal   = document.getElementById('amount').value.trim();
 
-    const fromError = document.getElementById('fromAccountError');
+    const fromError   = document.getElementById('fromAccountError');
     const amountError = document.getElementById('amountError');
 
+    // reset errors
     fromError.textContent = '';
     amountError.textContent = '';
 
+    // validate account selection
     if (!fromAccount.value) {
         fromError.textContent = 'Please select an account.';
         isValid = false;
     }
 
+    // validate amount
     const amountNum = parseFloat(amountVal);
     if (!amountVal || isNaN(amountNum) || amountNum <= 0) {
         amountError.textContent = 'Please enter a valid positive amount.';
         isValid = false;
     }
 
+    // stop if invalid
     if (!isValid) {
+        event.preventDefault();
+        return;
+    }
+
+    // confirmation popup
+    const ok = confirm('Are you sure you want to WITHDRAW this amount?');
+    if (!ok) {
         event.preventDefault();
     }
 });

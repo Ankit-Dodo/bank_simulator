@@ -32,6 +32,12 @@ if (!$result || mysqli_num_rows($result) !== 1) {
 
 $user = mysqli_fetch_assoc($result);
 
+// for inactive user
+if (isset($user['status']) && strtolower($user['status']) !== 'active') {
+    header("Location: ../pages/login.php?error=Your+account+is+inactive");
+    exit;
+}
+
 // Verify hashed password
 if (!password_verify($password, $user['password_hash'])) {
     header("Location: ../pages/login.php?error=Invalid+email+or+password");

@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// reading username from session
+
 $username = $_SESSION['username'] ?? 'User';
 ?>
 <!DOCTYPE html>
@@ -61,11 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <a href="../pages/customer_details.php">
                     <img src="../images/add-user.png" alt="Create Icon" class="dropdown-icon">
                     Add Details
-                </a>
-
-                <a href="../pages/customer_details.php">
-                    <img src="../images/edit.png" alt="Edit Icon" class="dropdown-icon">
-                    edit Details
                 </a>
 
                 <a href="../actions/logout.php" class="logout-option">

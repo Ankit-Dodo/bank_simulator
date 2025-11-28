@@ -187,8 +187,9 @@ try {
 
     mysqli_commit($conn);
 
-    header("Location: ../pages/home.php?success=Transfer+completed");
+    header("Location: ../pages/transfer.php?success=transfer&amount=" . urlencode($amount_int));
     exit;
+
 
 } catch (Exception $e) {
     mysqli_rollback($conn);

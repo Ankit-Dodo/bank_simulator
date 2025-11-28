@@ -15,8 +15,10 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     password_hash VARCHAR(255) NOT NULL,
+    status ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- TABLE: profile
 DROP TABLE IF EXISTS profile;
@@ -67,52 +69,75 @@ CREATE TABLE `transaction` (
 
 
 -- Users table Data
-INSERT INTO users (id, username, role, email, created_at, last_login, password_hash) VALUES
-(1, 'Ankit', 'admin', 'ankitrawat@gmail.com', '2025-11-18 07:01:00', '2025-11-18 07:01:00', '$2y$12$dy8UcRaiczzu8NgHQjaQh.icZKuNdkLt0/40Ji0ubH9OaVDmwlRqy'),
-(2, 'Ajay01', 'customer', 'ajay@gmail.com', '2025-11-18 11:22:26', '2025-11-18 11:22:26', '$2y$12$/1/1mDHUhBVfPGPQC4yWUe.GQM3wTZ5ypvhsYtRYXGhqb9PWqDeCW'),
-(4, 'aman01', 'customer', 'aman@gmail.com', '2025-11-18 05:58:15', '2025-11-18 05:58:15', '$2y$12$LpPBASFmagrncoReoQL0tekGz25PvSiIVIpm2S7bM7mrd9Kiya0f.'),
-(5, 'sumit', 'customer', 'sumitgarg@gmail.com', '2025-11-19 04:00:00', '2025-11-19 04:00:00', '$2y$12$rpOV5313faN0BbfSu3IaLOnttcOpUvQKcEIipOoqbbSKkLnn5Or4W'),
-(6, 'chandan', 'customer', 'chandan@gmail.com', '2025-11-20 12:00:00', '2025-11-20 12:00:00', '$2y$12$81uphfxKzF8iGuEUvNSjduXNSFD/uLtNXK4SgYFOt.ALDNpuVDUPy'),
-(7, 'viany', 'customer', 'vinay@gmail.com', '2025-11-21 05:02:43', '2025-11-21 05:02:43', '$2y$12$u/CN0Zr5U1h8lJB7UoMIT.Ak/ulL00cbZkMzJeuKARFFUtqHQHtD2'),
-(8, 'kashish', 'customer', 'kashish@gmail.com', '2025-11-21 06:20:00', '2025-11-21 06:20:00', '$2y$12$g5tuFOy3Girl0FTzUELAKebplUpN74wFTUM/FFG16b2FG0cGfLXjC'),
-(9, 'Mohit', 'customer', 'mohit@gmail.com', '2025-11-21 09:03:37', '2025-11-21 09:03:37', '$2y$12$IhV6cNmc6UyQsdDzLyOvQ.keeHDrZ69wYVhCkXlJ5BL0uO5qQWxZu');
+INSERT INTO users 
+(id, username, role, email, created_at, last_login, password_hash, status) VALUES
+(1, 'Ankit', 'admin', 'ankitrawat@gmail.com', '2025-11-18 12:31:04', '2025-11-20 18:28:56', '$2y$12$dy8UcRaiczzu8NgHQjaQh.icZKuNdkLt0/40Ji0ubH9OaVDmwlRqy', 'Active'),
+(2, 'Ajay01', 'customer', 'ajay@gmail.com', '2025-11-18 16:52:26', '2025-11-20 17:26:43', '$2y$12$/1/1mDHUhBVfPGPQC4yWUe.GQM3wTZ5ypvhsYtRYXGhqb9PWqDeCW', 'Active'),
+(4, 'aman01', 'customer', 'aman@gmail.com', '2025-11-18 11:28:15', '2025-11-20 17:50:15', '$2y$12$LpPBASFmagrncoReoQL0tekGz25PvSiIVIpm2S7bM7mrd9Kiya0f.', 'Active'),
+(5, 'sumit', 'customer', 'sumitgarg@gmail.com', '2025-11-19 09:37:53', '2025-11-20 14:36:44', '$2y$12$rpOV5313faN0BbfSu3IaLOnttcOpUvQKcEIipOoqbbSKkLnn5Or4W', 'Active'),
+(6, 'chandan', 'customer', 'chandan@gmail.com', '2025-11-20 17:38:37', '2025-11-20 18:18:40', '$2y$12$81uphfxKzF8iGuEUvNSjduXNSFD/uLtNXK4SgYFOt.ALDNpuVDUPy', 'Active'),
+(7, 'viany', 'customer', 'vinay@gmail.com', '2025-11-21 10:32:43', '2025-11-21 10:32:43', '$2y$12$u/CN0Zr5U1h8lJB7UoMIT.Ak/ulL00cbZkMzJeuKARFFUtqHQHtD2', 'Active'),
+(8, 'kashish', 'customer', 'kashish@gmail.com', '2025-11-21 11:53:21', '2025-11-21 11:53:21', '$2y$12$g5tuFOy3Girl0FTzUELAKebplUpN74wFTUM/FFG16b2FG0cGfLXjC', 'Active'),
+(9, 'Mohit', 'customer', 'mohit@gmail.com', '2025-11-21 14:33:37', '2025-11-21 14:33:37', '$2y$12$IhV6cNmc6UyQsdDzLyOvQ.keeHDrZ69wYVhCkXlJ5BL0uO5qQWxZu', 'Active'),
+(10, 'Garima', 'customer', 'garima@gmail.com', '2025-11-21 15:26:33', '2025-11-21 15:26:33', '$2y$12$dS/AQR0872qzyDumJfoDHORhm9SmrRSolmrpzp7tBscsB6XspGpye', 'Active');
 
 
 --  Profile table Data
-INSERT INTO profile (id, user_id, full_name, DOB, phone, Address) VALUES
+INSERT INTO `profile`
+(id, user_id, full_name, DOB, phone, Address) VALUES
 (1, 5, 'Sumit Garg', '2000-01-10', '9564823654', '101, bilaspur, india'),
 (2, 4, 'Aman Rawat', '1999-02-02', '7906722965', '105,New Delhi, India'),
 (3, 2, 'Ajay Roy', '2001-03-06', '9756248915', '502, New Delhi, India'),
 (4, 6, 'chandan', '2003-02-11', '9756248915', '11,haryana'),
 (5, 7, 'Vinay', '2002-07-25', '8569456820', '203, Haryana, India'),
 (6, 8, 'Kashish Mittal', '2004-03-21', '7596458123', '101,hansi,India'),
-(7, 9, 'Mohit Kumar', '2002-03-07', '7546952365', '101, Chandigarh, India');
+(7, 9, 'Mohit Kumar', '2002-03-07', '7546952365', '101, Chandigarh, India'),
+(8, 10, 'Garima Tomar', '2003-08-13', '9562348567', '502, meerut, India');
+
 
 
 --  Account table Data
-INSERT INTO account (id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
-(1, 1, 'savings', 5510894543, 190, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(3, 1, 'savings', 1604531907, 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+INSERT INTO `account`
+(account_id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
+(1, 1, 'savings', 5510894543, 800, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(3, 2, 'savings', 1604531907, 1900, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
 (8, 4, 'current', 5040695771, 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(9, 4, 'savings', 1382350014, 1500, 1500, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
-(10, 5, 'savings', 2505450134, 10, 10, 'Active', 'INDB0000323', '2025-11-18 11:28:15'),
-(11, 2, 'savings', 1999456111, 0, NULL, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
-(12, 3, 'savings', 6073305580, 30, 10, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
-(15, 6, 'salary', 2915132205, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
-(16, 7, 'salary', 9198726596, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 14:33:37');
+(9, 4, 'savings', 1382350014, 1800, 1500, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(10, 5, 'savings', 2505450134, 810, 10, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(11, 2, 'savings', 1999445611, 500, NULL, 'Active', 'INDB0000323', '2025-11-18 11:28:15'),
+(12, 1, 'savings', 6073305580, 240, 10, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
+(13, 6, 'salary', 2915132205, 2240, 500, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
+(15, 7, 'salary', 9198726596, 2000, 2000, 'Active', 'INDB0000323', '2025-11-21 14:33:37'),
+(16, 8, 'savings', 2834645532, 600, 500, 'Active', 'INDB0000323', '2025-11-21 15:26:33'),
+(17, 1, 'savings', 3599136868, 500, 500, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
+(18, 3, 'savings', 3415149038, 0, NULL, 'Pending', 'INDB0000323', '2025-11-18 16:52:26');
+
 
 
 INSERT INTO `transaction`
 (id, account_id, transaction_type, amount, transaction_date, performed_by, status) VALUES
-(1, 3, 'deposit', 500, '2025-11-24 11:40:53', 1, 'completed'),
-(2, 3, 'deposit', 500, '2025-11-24 11:41:10', 1, 'completed'),
-(3, 3, 'withdraw', 100, '2025-11-24 11:41:47', 1, 'completed'),
-(4, 3, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
+(1, 3,  'deposit',  500, '2025-11-24 11:40:53', 1, 'completed'),
+(2, 3,  'deposit',  500, '2025-11-24 11:41:10', 1, 'completed'),
+(3, 3,  'withdraw', 100, '2025-11-24 11:41:47', 1, 'completed'),
+(4, 3,  'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
 (5, 11, 'transfer', 100, '2025-11-24 14:38:11', 1, 'completed'),
-(6, 8, 'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
-(7, 9, 'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
-(8, 9, 'withdraw', 100, '2025-11-25 09:35:38', 6, 'completed'),
-(9, 3, 'withdraw', 100, '2025-11-25 10:07:56', 1, 'completed'),
-(10, 10, 'deposit', 500, '2025-11-25 10:25:31', 1, 'completed'),
+(6, 8,  'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
+(7, 9,  'transfer', 400, '2025-11-25 09:28:40', 6, 'completed'),
+(8, 9,  'withdraw', 100, '2025-11-25 09:35:38', 6, 'completed'),
+(9, 3,  'withdraw', 100, '2025-11-25 10:07:56', 1, 'completed'),
+(10, 10,'deposit',  500, '2025-11-25 10:25:31', 1, 'completed'),
 (11, 3, 'transfer', 200, '2025-11-25 10:27:03', 1, 'completed'),
-(12, 10, 'transfer', 200, '2025-11-25 10:27:03', 1, 'completed');
+(12, 10,'transfer', 200, '2025-11-25 10:27:03', 1, 'completed'),
+(13, 10,'deposit',  100, '2025-11-25 11:20:54', 1, 'completed'),
+(14, 10,'withdraw', 100, '2025-11-25 11:21:18', 1, 'completed'),
+(15, 13,'transfer', 150, '2025-11-25 11:24:55', 1, 'completed'),
+(16, 1, 'transfer', 150, '2025-11-25 11:24:55', 1, 'completed'),
+(17, 1, 'deposit',  120, '2025-11-25 17:14:49', 1, 'completed'),
+(18, 11,'withdraw', 100, '2025-11-28 09:48:55', 1, 'completed'),
+(19, 16,'deposit',  100, '2025-11-28 10:44:17', 1, 'completed'),
+(20, 13,'deposit',  500, '2025-11-28 11:04:56', 1, 'completed'),
+(21, 13,'withdraw', 100, '2025-11-28 11:09:20', 1, 'completed'),
+(22, 13,'withdraw', 10,  '2025-11-28 11:10:42', 1, 'completed'),
+(23, 3, 'transfer', 100, '2025-11-28 11:15:53', 1, 'completed'),
+(24, 10,'transfer', 100, '2025-11-28 11:15:53', 1, 'completed');
+

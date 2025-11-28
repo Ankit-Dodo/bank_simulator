@@ -70,6 +70,27 @@ include "../includes/header.php";
 ?>
 
 <h3 class="page-title-center">Transfer Money</h3>
+<link rel="stylesheet" href="transfer.css">
+
+<?php if (isset($_GET['success']) && $_GET['success'] === 'transfer' && isset($_GET['amount'])): ?>
+
+<div class="flash-message" id="flashMsg">
+    ₹<?= htmlspecialchars($_GET['amount']) ?> was successfully transferred!
+</div>
+<script>
+    // Fade-out animation
+    setTimeout(() => {
+        const flash = document.getElementById('flashMsg');
+        if (flash) flash.classList.add('flash-hide');
+    }, 2500);
+
+    // Auto redirect
+    setTimeout(() => {
+        window.location.href = "/pages/transfer.php";
+    }, 3200);
+</script>
+
+<?php endif; ?>
 
 <div class="form-container-center">
     <?php if (empty($accounts)): ?>
@@ -136,6 +157,7 @@ document.getElementById("transferForm")?.addEventListener("submit", function(eve
     const errAcc   = document.getElementById("accountNumberError");
     const errConf  = document.getElementById("confirmAccountError");
 
+    // reset errors
     errFrom.textContent = "";
     errAmt.textContent  = "";
     errAcc.textContent  = "";
@@ -168,7 +190,15 @@ document.getElementById("transferForm")?.addEventListener("submit", function(eve
         isValid = false;
     }
 
+    // stop if invalid
     if (!isValid) {
+        event.preventDefault();
+        return;
+    }
+
+    // confirmation popup
+    const ok = confirm("Are you sure you want to perform this TRANSFER?");
+    if (!ok) {
         event.preventDefault();
     }
 });
