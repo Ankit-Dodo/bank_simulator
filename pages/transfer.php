@@ -69,27 +69,25 @@ if ($result && mysqli_num_rows($result) > 0) {
 include "../includes/header.php";
 ?>
 
+<link rel="stylesheet" href="../css/transfer.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <h3 class="page-title-center">Transfer Money</h3>
-<link rel="stylesheet" href="transfer.css">
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'transfer' && isset($_GET['amount'])): ?>
-
-<div class="flash-message" id="flashMsg">
-    ₹<?= htmlspecialchars($_GET['amount']) ?> was successfully transferred!
-</div>
 <script>
-    // Fade-out animation
-    setTimeout(() => {
-        const flash = document.getElementById('flashMsg');
-        if (flash) flash.classList.add('flash-hide');
-    }, 2500);
+    Swal.fire({
+        title: "Success!",
+        text: "₹<?= htmlspecialchars($_GET['amount']) ?> was successfully transferred!",
+        icon: "success",
+        timer: 2500,
+        showConfirmButton: false
+    });
 
-    // Auto redirect
     setTimeout(() => {
-        window.location.href = "/pages/transfer.php";
-    }, 3200);
+        window.location.href = "/pages/deposit.php";
+    }, 2600);
 </script>
-
 <?php endif; ?>
 
 <div class="form-container-center">
@@ -145,12 +143,15 @@ include "../includes/header.php";
 
 <script>
 document.getElementById("transferForm")?.addEventListener("submit", function(event) {
+    event.preventDefault(); // stop form for now
+    const form = this;
+
     let isValid = true;
 
     const fromAccount = document.getElementById("from_id");
-    const amountVal   = document.getElementById("amount").value.trim();
-    const accNum      = document.getElementById("account_number").value.trim();
-    const confirmAcc  = document.getElementById("confirm_account_number").value.trim();
+    const amountInput = document.getElementById("amount");
+    const accInput    = document.getElementById("account_number");
+    const confInput   = document.getElementById("confirm_account_number");
 
     const errFrom  = document.getElementById("fromAccountError");
     const errAmt   = document.getElementById("amountError");
@@ -162,6 +163,10 @@ document.getElementById("transferForm")?.addEventListener("submit", function(eve
     errAmt.textContent  = "";
     errAcc.textContent  = "";
     errConf.textContent = "";
+
+    const amountVal = amountInput.value.trim();
+    const accNum    = accInput.value.trim();
+    const confirmAcc = confInput.value.trim();
 
     // From account required
     if (!fromAccount.value) {
@@ -192,15 +197,22 @@ document.getElementById("transferForm")?.addEventListener("submit", function(eve
 
     // stop if invalid
     if (!isValid) {
-        event.preventDefault();
         return;
     }
 
-    // confirmation popup
-    const ok = confirm("Are you sure you want to perform this TRANSFER?");
-    if (!ok) {
-        event.preventDefault();
-    }
+    // SweetAlert confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to TRANSFER ₹ " + amountVal + "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Transfer",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
 });
 </script>
 

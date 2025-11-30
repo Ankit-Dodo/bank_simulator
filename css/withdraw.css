@@ -1,22 +1,26 @@
-/* form {
-    max-width: 420px;
-    margin: 25px auto;
-    padding: 24px;
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-} */
-
-/* ---------- Page Title ---------- */
+/* Withdraw Form Styles */
 h3 {
     text-align: center;
     margin-top: 20px;
     font-size: 24px;
     font-weight: 600;
-    color: #c62828; 
+    color: #1e3799;
 }
 
-/* ---------- Input Labels ---------- */
+.form-container-center {
+    max-width: 420px;
+    margin: 25px auto 40px;
+    padding: 24px 26px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+/* label */
 form label {
     display: block;
     font-size: 15px;
@@ -24,32 +28,35 @@ form label {
     margin-bottom: 6px;
     color: #333;
 }
-
-/* ---------- Inputs ---------- */
+/* input */
 form input[type="text"],
-form input[type="number"]{
+form input[type="number"],
+form select {
+    width: 100%;
     padding: 10px 12px;
-    margin-bottom: 16px;
     font-size: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     transition: 0.2s;
     background: #fafafa;
+    box-sizing: border-box;
 }
 
 /* Focus effect */
-form input:focus {
+form input:focus,
+form select:focus {
     border-color: #c62828;
     background: #fff;
     box-shadow: 0 0 3px rgba(198, 40, 40, 0.3);
     outline: none;
 }
 
-/* ---------- Submit Button ---------- */
-form button {
+/* Submit Button */
+form button,
+.btn-primary {
     width: 100%;
     padding: 12px;
-    background: #c62828; 
+    background: #1e3799;
     color: white;
     border: none;
     border-radius: 8px;
@@ -59,16 +66,16 @@ form button {
     transition: 0.2s;
 }
 
-form button:hover {
-    background: #a31f1f;
+form button:hover,
+.btn-primary:hover {
+    background: #0c2461;
 }
-
-.error-text {
+/* error-message */
+.error-text,
+.error-message {
     display: block;
     font-size: 12px;
     color: #d32f2f;
     margin-top: 4px;
     margin-bottom: 8px;
 }
-
-

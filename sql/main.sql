@@ -38,12 +38,12 @@ CREATE TABLE profile (
 -- TABLE: account
 DROP TABLE IF EXISTS account;
 CREATE TABLE account (
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    profile_id BIGINT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
+    profile_id INT NOT NULL,
     account_type ENUM('savings', 'current', 'salary') NOT NULL,
-    account_number BIGINT NOT NULL,
-    balance BIGINT NOT NULL,
-    min_balance BIGINT DEFAULT NULL,
+    account_number int NOT NULL UNIQUE,
+    balance INT NOT NULL,
+    min_balance int DEFAULT NULL,
     status ENUM('Active', 'Pending') NOT NULL,
     ifsc_code VARCHAR(20) NOT NULL DEFAULT 'INDB0000323',
     account_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -59,7 +59,7 @@ CREATE TABLE `transaction` (
     id INT NOT NULL AUTO_INCREMENT,
     account_id INT NOT NULL,
     transaction_type ENUM('deposit','withdraw','transfer') NOT NULL,
-    amount BIGINT NOT NULL,
+    amount int NOT NULL,
     transaction_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     performed_by INT NOT NULL,
     status ENUM('completed','pending','cancelled') NOT NULL DEFAULT 'completed',
@@ -100,27 +100,25 @@ INSERT INTO `profile`
 
 
 --  Account table Data
-INSERT INTO `account`
-(account_id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
-(1, 1, 'savings', 5510894543, 800, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(3, 2, 'savings', 1604531907, 1730, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(8, 4, 'current', 5040695771, 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(9, 4, 'savings', 1382350014, 1800, 1500, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(10, 5, 'savings', 2505450134, 810, 10, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
-(11, 2, 'savings', 1999445611, 490, NULL, 'Active', 'INDB0000323', '2025-11-18 11:28:15'),
-(12, 1, 'savings', 6073305580, 240, 10, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
-(13, 6, 'salary', 2915132205, 2230, 500, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
-(15, 7, 'salary', 9198726596, 2000, 200, 'Active', 'INDB0000323', '2025-11-21 14:33:37'),
-(16, 8, 'savings', 2834645532, 600, 500, 'Active', 'INDB0000323', '2025-11-21 15:26:33'),
-(17, 1, 'savings', 3599136868, 500, 500, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
-(18, 3, 'savings', 3415149038, 5000, NULL, 'Active', 'INDB0000323', '2025-11-18 16:52:26'),
-(19, 9, 'savings', 9263465112, 10000, NULL, 'Active', 'INDB0000323', '2025-11-28 17:45:45');
+INSERT INTO account (id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
+(1, 1, 'savings', '5510894543', 800, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(3, 2, 'savings', '1604531907', 1730, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(8, 4, 'current', '5040695771', 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(9, 4, 'savings', '1382350014', 2000, 1500, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(10, 5, 'savings', '2505450134', 10800, 10, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(11, 2, 'savings', '1999445611', 3690, NULL, 'Active', 'INDB0000323', '2025-11-18 11:28:15'),
+(12, 1, 'savings', '6073305580', 700, 10, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
+(13, 6, 'salary', '2915132205', 2000, 500, 'Active', 'INDB0000323', '2025-11-21 11:53:21'),
+(15, 7, 'salary', '9198726596', 20000, 200, 'Active', 'INDB0000323', '2025-11-21 14:33:37'),
+(16, 8, 'savings', '2834645532', 1000, 500, 'Active', 'INDB0000323', '2025-11-21 15:26:33'),
+(17, 1, 'savings', '3599136868', 500, 500, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
+(18, 3, 'savings', '3415149038', 5000, NULL, 'Active', 'INDB0000323', '2025-11-18 16:52:26'),
+(19, 9, 'savings', '9263465112', 10000, NULL, 'Active', 'INDB0000323', '2025-11-28 17:45:45');
 
 
 
 
-INSERT INTO `transaction`
-(id, account_id, transaction_type, amount, transaction_date, performed_by, status) VALUES
+INSERT INTO transaction (id, account_id, transaction_type, amount, transaction_date, performed_by, status) VALUES
 (1, 3, 'deposit', 500, '2025-11-24 11:40:53', 1, 'completed'),
 (2, 3, 'deposit', 500, '2025-11-24 11:41:10', 1, 'completed'),
 (3, 3, 'withdraw', 100, '2025-11-24 11:41:47', 1, 'completed'),
@@ -164,5 +162,20 @@ INSERT INTO `transaction`
 (41, 3, 'withdraw', 10, '2025-11-28 15:05:33', 1, 'completed'),
 (42, 3, 'withdraw', 10, '2025-11-28 15:19:29', 1, 'completed'),
 (43, 18, 'deposit', 5000, '2025-11-28 16:18:18', 1, 'completed'),
-(44, 19, 'deposit', 10000, '2025-11-28 17:48:39', 1, 'completed');
+(44, 19, 'deposit', 10000, '2025-11-28 17:48:39', 1, 'completed'),
+(45, 1, 'deposit', 5000, '2025-11-29 12:14:28', 1, 'completed'),
+(46, 10, 'deposit', 5000, '2025-11-29 12:21:54', 1, 'completed'),
+(47, 13, 'withdraw', 30, '2025-11-29 12:26:48', 1, 'completed'),
+(48, 10, 'deposit', 5000, '2025-11-29 12:27:21', 1, 'completed'),
+(49, 12, 'withdraw', 20, '2025-11-29 12:29:57', 5, 'completed'),
+(50, 11, 'deposit', 2000, '2025-11-30 19:40:16', 1, 'completed'),
+(51, 11, 'deposit', 500, '2025-11-30 19:42:34', 1, 'completed'),
+(52, 11, 'deposit', 500, '2025-11-30 19:43:11', 1, 'completed'),
+(53, 11, 'deposit', 200, '2025-11-30 19:43:48', 1, 'completed'),
+(54, 12, 'deposit', 500, '2025-11-30 19:51:19', 1, 'completed'),
+(55, 16, 'deposit', 400, '2025-11-30 19:59:56', 1, 'completed'),
+(56, 10, 'withdraw', 10, '2025-11-30 20:16:59', 1, 'completed'),
+(57, 12, 'withdraw', 20, '2025-11-30 20:27:04', 1, 'completed'),
+(58, 13, 'transfer', 200, '2025-11-30 20:27:52', 1, 'completed'),
+(59, 9, 'transfer', 200, '2025-11-30 20:27:52', 1, 'completed');
 

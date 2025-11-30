@@ -67,29 +67,27 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 include "../includes/header.php";
 ?>
+
 <link rel="stylesheet" href="../css/withdraw.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <h3 class="page-title-center">Withdraw Money</h3>
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'withdraw' && isset($_GET['amount'])): ?>
-
-<div class="flash-message" id="flashMsg">
-    ₹<?= htmlspecialchars($_GET['amount']) ?> was successfully withdrawn!
-</div>
-
 <script>
-    // fade-out animation
-    setTimeout(() => {
-        const flash = document.getElementById('flashMsg');
-        if (flash) flash.classList.add('flash-hide');
-    }, 2500);
+    Swal.fire({
+        title: "Success!",
+        text: "₹<?= htmlspecialchars($_GET['amount']) ?> was successfully withdrawn!",
+        icon: "success",
+        timer: 2500,
+        showConfirmButton: false
+    });
 
-    // redirect after fade
-    setTimeout(() => {
-        window.location.href = "/pages/withdraw.php";
-    }, 3200);
+    // remove query params so refresh doesn’t show it again
+    if (window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 </script>
-
 <?php endif; ?>
 
 
@@ -115,6 +113,7 @@ include "../includes/header.php";
                 </select>
                 <span class="error-message" id="fromAccountError"></span>
             </div>
+
             <div class="form-group">
                 <label for="amount">Amount (Rs.)</label>
                 <input type="text" id="amount" name="amount" required>
@@ -128,10 +127,14 @@ include "../includes/header.php";
 
 <script>
 document.getElementById('withdrawForm')?.addEventListener('submit', function(event) {
+    event.preventDefault(); // stop form for now
+    const form = this;
+
     let isValid = true;
 
     const fromAccount = document.getElementById('from_id');
-    const amountVal   = document.getElementById('amount').value.trim();
+    const amountInput = document.getElementById('amount');
+    const amountVal   = amountInput.value.trim();
 
     const fromError   = document.getElementById('fromAccountError');
     const amountError = document.getElementById('amountError');
@@ -155,15 +158,22 @@ document.getElementById('withdrawForm')?.addEventListener('submit', function(eve
 
     // stop if invalid
     if (!isValid) {
-        event.preventDefault();
         return;
     }
 
-    // confirmation popup
-    const ok = confirm('Are you sure you want to WITHDRAW this amount?');
-    if (!ok) {
-        event.preventDefault();
-    }
+    // SweetAlert confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to WITHDRAW ₹ " + amountVal + "?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Withdraw",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
 });
 </script>
 

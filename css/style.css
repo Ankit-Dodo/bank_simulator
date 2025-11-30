@@ -355,17 +355,6 @@ html, body {
     color: #1e3799;
 }
 
-/* FORM CENTER CARD */
-.form-container-center {
-    width: 420px;
-    background: #ffffff;
-    padding: 28px 30px 30px;
-    border-radius: 12px;
-    margin: 0 auto 60px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    box-sizing: border-box;
-}
-
 /*  TABLES  */
 .ui-table {
     width: 100%;

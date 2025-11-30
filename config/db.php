@@ -1,9 +1,10 @@
 <?php
 
-$host = "localhost";
+$host = "localhost:3307";
 $user = "phpmyadmin";
 $pass = "Passw0rd!123";
 $db   = "bank_simulator";
+
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 

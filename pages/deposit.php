@@ -1,30 +1,28 @@
 <?php include("../config/db.php"); ?>
 
 <link rel="stylesheet" href="../css/deposit.css">
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php include("../includes/header.php"); ?>
 
 <h3>Deposit Money</h3>
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'deposit' && isset($_GET['amount'])): ?>
 
-<div class="flash-message" id="flashMsg">
-    Rs.<?= htmlspecialchars($_GET['amount']) ?> was successfully deposited!
-</div>
-
 <script>
-    setTimeout(() => {
-        const flash = document.getElementById('flashMsg');
-        if (flash) {
-            flash.classList.add('flash-hide');
-        }
-    }, 2500);
+    Swal.fire({
+        title: "Success!",
+        text: "Rs.<?= htmlspecialchars($_GET['amount']) ?> was successfully deposited!",
+        icon: "success",
+        timer: 2500,
+        showConfirmButton: false
+    });
     setTimeout(() => {
         window.location.href = "/pages/deposit.php";
-    }, 3200);
+    }, 2600);
 </script>
 
 <?php endif; ?>
+
 
 <form id="depositForm" method="post" action="../actions/deposit_action.php">
     
@@ -44,8 +42,9 @@
 </form>
 
 <script>
-// simple front-end validation + confirmation
 document.getElementById('depositForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // stop form for now
+
     let valid = true;
 
     const amountInput   = document.getElementById('amount');
@@ -84,19 +83,27 @@ document.getElementById('depositForm').addEventListener('submit', function (e) {
         confirmError.textContent = 'Account numbers do not match.';
         valid = false;
     }
+
     // if invalid stop
     if (!valid) {
-        e.preventDefault();
         return;
     }
 
-    // confirmation
-    const ok = confirm('Are you sure you want to DEPOSIT this amount?');
-    if (!ok) {
-        e.preventDefault();
-    }
+    // SweetAlert confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to DEPOSIT Rs. " + amountVal + " to this account?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Deposit",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // submit the form if confirmed
+            e.target.submit();
+        }
+    });
 });
 </script>
-
 
 <?php include("../includes/footer.php"); ?>

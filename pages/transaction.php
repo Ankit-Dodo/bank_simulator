@@ -25,7 +25,7 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($row['role']) === 'admin');
 }
 
-/* ---------- SEARCH + PAGINATION SETUP ---------- */
+/*  SEARCH + PAGINATION SETUP  */
 
 // search by account holder name
 $search = isset($_GET['search']) ? trim($_GET['search']) : "";
@@ -119,7 +119,6 @@ if ($queryError === null && $totalRows > 0) {
 
 <div class="transactions-container">
 
-   <!-- SEARCH + GO BACK ROW (Same container) -->
     <div class="search-row">
 
         <!-- LEFT → Go Back button (only when search is active) -->
