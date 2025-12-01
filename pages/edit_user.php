@@ -172,25 +172,38 @@ if ($selectedUserId) {
 include "../includes/header.php";
 ?>
 <link rel="stylesheet" href="../css/edit_user.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <h3 class="page-title-center">Manage Accounts / Users - Edit User Details</h3>
 
 <div class="form-container-center admin-edit-container">
 
     <?php if ($errorMsg): ?>
-        <p class="admin-edit-error"><?= htmlspecialchars($errorMsg) ?></p>
-    <?php endif; ?>
-
-    <?php if ($successMsg): ?>
-        <div class="flash-message success admin-edit-flash">
-            <?= htmlspecialchars($successMsg) ?>
-        </div>
         <script>
-            setTimeout(() => {
-                window.location.href = "../pages/home.php";
-            }, 2500);
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "<?= htmlspecialchars($errorMsg) ?>",
+                confirmButtonColor: "#d33"
+            });
         </script>
     <?php endif; ?>
+
+
+    <?php if ($successMsg): ?>
+        <script>
+            Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: "<?= htmlspecialchars($successMsg) ?>",
+                timer: 2500,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = "../pages/home.php";
+            });
+        </script>
+    <?php endif; ?>
+
 
     <!-- Select user dropdown -->
     <form method="post" class="admin-edit-select-form">
