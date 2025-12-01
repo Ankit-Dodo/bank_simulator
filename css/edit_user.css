@@ -1,0 +1,160 @@
+body {
+    background: #f5f7fb;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Page Title */
+.page-title-center {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    color: #003b95;
+}
+
+.admin-edit-container {
+    max-width: 600px;
+    margin: 20px auto 50px;
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* message */
+.admin-edit-error {
+    background: #ffdddd;
+    color: #c0392b;
+    padding: 12px;
+    border-left: 4px solid #c0392b;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.admin-edit-flash {
+    background: #d4f8d4;
+    color: #2e7d32;
+    padding: 12px;
+    border-left: 4px solid #2e7d32;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* drop down */
+.admin-edit-select-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.admin-edit-label {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.admin-edit-select {
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    outline: none;
+}
+
+.admin-edit-load-btn {
+    background: #003b95;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 150px;
+}
+
+
+.admin-edit-select-form .admin-edit-load-btn {
+    display: block;
+    margin: 15px auto 0 auto;   
+    width: 160px;               
+    text-align: center;
+}
+
+
+.admin-edit-load-btn:hover {
+    background: #002a6e;
+}
+
+/* userform */
+.admin-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 25px;
+}
+
+/* Input groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Inputs */
+.admin-edit-form input,
+.admin-edit-form textarea,
+.admin-edit-form select {
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    outline: none;
+}
+
+/* Disabled username field */
+.admin-edit-form input[disabled] {
+    background: #f2f3f7;
+    color: #555;
+}
+
+/* Focus effect */
+.admin-edit-form input:focus,
+.admin-edit-form textarea:focus,
+.admin-edit-form select:focus {
+    border-color: #003b95;
+    box-shadow: 0 0 0 2px rgba(0, 59, 149, 0.15);
+}
+
+/* Validation error text */
+.error-message {
+    color: #d63031;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Save button */
+.btn-primary {
+    background: #003b95;
+    color: #ffffff;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #002a6e;
+}

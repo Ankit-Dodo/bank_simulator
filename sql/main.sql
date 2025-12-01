@@ -41,7 +41,7 @@ CREATE TABLE account (
     id INT NOT NULL AUTO_INCREMENT,
     profile_id INT NOT NULL,
     account_type ENUM('savings', 'current', 'salary') NOT NULL,
-    account_number int NOT NULL UNIQUE,
+    account_number bigint NOT NULL UNIQUE,
     balance INT NOT NULL,
     min_balance int DEFAULT NULL,
     status ENUM('Active', 'Pending') NOT NULL,
@@ -101,10 +101,10 @@ INSERT INTO `profile`
 
 --  Account table Data
 INSERT INTO account (id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
-(1, 1, 'savings', '5510894543', 800, NULL, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(3, 2, 'savings', '1604531907', 1730, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(8, 4, 'current', '5040695771', 1000, 1000, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
-(9, 4, 'savings', '1382350014', 2000, 1500, 'Active', 'INDB0000323', '0000-00-00 00:00:00'),
+(1, 1, 'savings', '5510894543', 800, NULL, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(3, 2, 'savings', '1604531907', 1730, 1000, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(8, 4, 'current', '5040695771', 1000, 1000, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(9, 4, 'savings', '1382350014', 2000, 1500, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
 (10, 5, 'savings', '2505450134', 10800, 10, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
 (11, 2, 'savings', '1999445611', 3690, NULL, 'Active', 'INDB0000323', '2025-11-18 11:28:15'),
 (12, 1, 'savings', '6073305580', 700, 10, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),

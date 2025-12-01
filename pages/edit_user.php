@@ -171,6 +171,7 @@ if ($selectedUserId) {
 
 include "../includes/header.php";
 ?>
+<link rel="stylesheet" href="../css/edit_user.css">
 
 <h3 class="page-title-center">Manage Accounts / Users - Edit User Details</h3>
 

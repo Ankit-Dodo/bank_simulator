@@ -1,6 +1,6 @@
 <?php
 
-$host = "localhost:3307";
+$host = "localhost";
 $user = "phpmyadmin";
 $pass = "Passw0rd!123";
 $db   = "bank_simulator";

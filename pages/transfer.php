@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int)$_SESSION['user_id'];
 
-/* ---------- Determine if current user is admin ---------- */
+// checking for admin
 $isAdmin = false;
 $roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
 $roleRes = mysqli_query($conn, $roleSql);
@@ -21,7 +21,7 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($roleRow['role']) === 'admin');
 }
 
-/* ---------- Load accounts for dropdown ---------- */
+//  Load accounts for dropdown  
 $accounts = [];
 
 if ($isAdmin) {

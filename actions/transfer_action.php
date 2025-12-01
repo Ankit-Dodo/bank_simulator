@@ -139,7 +139,7 @@ if ($receiver_account_id === $sender_account_id) {
     die("Cannot transfer to the same account.");
 }
 
-// ---------- Perform transfer in a transaction ----------
+//  Perform transfer in a transaction 
 mysqli_begin_transaction($conn);
 
 try {
