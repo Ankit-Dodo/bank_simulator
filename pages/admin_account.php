@@ -68,7 +68,7 @@ $pendingRes = mysqli_query($conn, $pendingSql);
 
 // search
 $search = isset($_GET['search']) ? trim($_GET['search']) : "";
-$searchCondition = ""; // empty by default
+$searchCondition = ""; 
 
 if ($search !== "") {
     $searchEsc = mysqli_real_escape_string($conn, $search);
@@ -241,7 +241,7 @@ $accountsRes = mysqli_query($conn, $accountsSql);
         <input
             type="text"
             name="search"
-            placeholder="Search by name..."
+            placeholder="Search here..."
             value="<?= htmlspecialchars($search) ?>"
         >
         <button type="submit">Search</button>

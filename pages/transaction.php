@@ -141,7 +141,7 @@ if ($queryError === null && $totalRows > 0) {
             <input
                 type="text"
                 name="search"
-                placeholder="Search by account holder name..."
+                placeholder="Search here..."
                 value="<?= htmlspecialchars($search) ?>"
             >
             <button type="submit">Search</button>
