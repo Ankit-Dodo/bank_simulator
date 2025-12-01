@@ -386,8 +386,8 @@ if (form) {
 
         // passwords (optional)
         if (p1) {
-            if (p1.length < 6) {
-                errNew.textContent = "Password must be at least 6 characters.";
+            if (p1.length < 5) {
+                errNew.textContent = "Password must be at least 5 characters.";
                 ok = false;
             }
             if (p1 !== p2) {

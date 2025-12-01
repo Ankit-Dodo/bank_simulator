@@ -48,7 +48,7 @@ if ($min_balance === '') {
 
 function generateAccountNumber($conn) {
     while (true) {
-        $num = random_int(1000000000, 9999999999);
+        $num = random_int(1000000000, 9999999999); //10 digits number
         $checkSql = "SELECT id FROM account WHERE account_number = $num LIMIT 1";
         $checkRes = mysqli_query($conn, $checkSql);
 

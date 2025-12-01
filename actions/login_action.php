@@ -44,6 +44,12 @@ if (!password_verify($password, $user['password_hash'])) {
     exit;
 }
 
+// Update last login timestamp
+$userId = $user['id'];
+$update = "UPDATE users SET last_login = NOW() WHERE id = $userId";
+mysqli_query($conn, $update);
+
+
 // Set session
 $_SESSION['user_id']   = $user['id'];
 $_SESSION['user_role'] = $user['role'];
