@@ -27,7 +27,6 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
 
 /*  SEARCH + PAGINATION SETUP  */
 
-// search by account holder name
 $search = isset($_GET['search']) ? trim($_GET['search']) : "";
 $searchEsc = $search !== "" ? mysqli_real_escape_string($conn, $search) : "";
 
@@ -43,7 +42,7 @@ $baseFrom = "
     FROM `transaction` t
     JOIN account a ON t.account_id = a.id
     JOIN profile p ON a.profile_id = p.id
-    JOIN users u ON p.user_id = u.id       -- account owner
+    JOIN users u ON p.user_id = u.id        -- account owner
     JOIN users pu ON t.performed_by = pu.id -- performer
 ";
 
@@ -54,9 +53,18 @@ if ($isAdmin) {
     $where = "WHERE u.id = $userId";
 }
 
-// add search condition if any
 if ($searchEsc !== "") {
-    $where .= " AND p.full_name LIKE '%$searchEsc%'";
+    $where .= " AND (
+        p.full_name LIKE '%$searchEsc%' OR
+        p.phone LIKE '%$searchEsc%' OR
+        u.username LIKE '%$searchEsc%' OR
+        u.email LIKE '%$searchEsc%' OR
+        a.account_number LIKE '%$searchEsc%' OR
+        t.transaction_type LIKE '%$searchEsc%' OR
+        t.status LIKE '%$searchEsc%' OR
+        pu.username LIKE '%$searchEsc%' OR
+        t.amount LIKE '%$searchEsc%'
+    )";
 }
 
 // total rows count (for pagination)
