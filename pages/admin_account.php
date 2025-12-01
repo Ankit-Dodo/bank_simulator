@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once "../config/db.php"; // uses $conn from db.php
 
-// --------- LOGIN CHECK ----------
+//  LOGIN CHECK 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../pages/login.php");
     exit;
@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = (int)$_SESSION['user_id'];
 
-// --------- ADMIN CHECK ----------
+// ADMIN CHECK 
 $roleSql = "SELECT role FROM users WHERE id = $user_id LIMIT 1";
 $roleRes = mysqli_query($conn, $roleSql);
 
@@ -68,12 +68,20 @@ $pendingRes = mysqli_query($conn, $pendingSql);
 
 // search
 $search = isset($_GET['search']) ? trim($_GET['search']) : "";
-$searchCondition = "";
+$searchCondition = ""; // empty by default
 
 if ($search !== "") {
     $searchEsc = mysqli_real_escape_string($conn, $search);
-    $searchCondition = "WHERE p.full_name LIKE '%$searchEsc%'";
+    $searchCondition = " AND (
+        p.full_name LIKE '%$searchEsc%' OR
+        u.username LIKE '%$searchEsc%' OR
+        u.email LIKE '%$searchEsc%' OR
+        p.phone LIKE '%$searchEsc%' OR
+        p.address LIKE '%$searchEsc%' OR
+        a.account_number LIKE '%$searchEsc%'
+    )";
 }
+
 
 // per-page
 $perPage = 10;
@@ -83,8 +91,11 @@ $countSql = "
     SELECT COUNT(*) AS total
     FROM account a
     JOIN profile p ON a.profile_id = p.id
+    JOIN users u ON p.user_id = u.id
+    WHERE 1
     $searchCondition
 ";
+
 $countRes = mysqli_query($conn, $countSql);
 $totalAccountsList = (int)mysqli_fetch_assoc($countRes)['total'];
 
@@ -101,7 +112,7 @@ if ($page > $totalPages) {
 
 $offset = ($page - 1) * $perPage;
 
-// ALL ACCOUNTS query (with pagination + search)
+// ALL ACCOUNTS query
 $accountsSql = "
     SELECT a.id, a.account_number, a.account_type, a.balance, a.status,
            a.ifsc_code, a.account_date,
@@ -110,10 +121,12 @@ $accountsSql = "
     FROM account a
     JOIN profile p ON a.profile_id = p.id
     JOIN users u ON p.user_id = u.id
+    WHERE 1
     $searchCondition
     ORDER BY a.id DESC
     LIMIT $perPage OFFSET $offset
 ";
+
 $accountsRes = mysqli_query($conn, $accountsSql);
 ?>
 
@@ -149,7 +162,7 @@ $accountsRes = mysqli_query($conn, $accountsSql);
 
 </div>
 
-<!-- Title row + manage users button -->
+<!-- manage users button -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0 5px 0;">
     <h4 class="section-title" style="margin:0;">Manage Accounts / Users</h4>
     <a href="../pages/edit_user.php" class="btn-secondary">Edit User Details</a>

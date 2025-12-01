@@ -106,7 +106,7 @@ if ($new_sender_balance < $sender_min) {
     die("Insufficient balance: cannot go below minimum balance.");
 }
 
-// ---------- Find RECEIVER account ----------
+// Find RECEIVER account 
 $receiverSql = "
     SELECT id, balance, status
     FROM account
