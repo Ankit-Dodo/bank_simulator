@@ -100,9 +100,9 @@ INSERT INTO `profile`
 
 
 --  Account table Data
-INSERT INTO account (id, profile_id, account_type, account_number, balance, min_balance, status, ifsc_code, account_date) VALUES
+INSERT INTO `account` (`id`, `profile_id`, `account_type`, `account_number`, `balance`, `min_balance`, `status`, `ifsc_code`, `account_date`) VALUES
 (1, 1, 'savings', '5510894543', 800, NULL, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
-(3, 2, 'savings', '1604531907', 1730, 1000, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
+(3, 2, 'savings', '1604531907', 1700, 1000, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
 (8, 4, 'current', '5040695771', 1000, 1000, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
 (9, 4, 'savings', '1382350014', 2000, 1500, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
 (10, 5, 'savings', '2505450134', 10800, 10, 'Active', 'INDB0000323', '2025-11-21 10:32:43'),
@@ -112,7 +112,7 @@ INSERT INTO account (id, profile_id, account_type, account_number, balance, min_
 (15, 7, 'salary', '9198726596', 20000, 200, 'Active', 'INDB0000323', '2025-11-21 14:33:37'),
 (16, 8, 'savings', '2834645532', 1000, 500, 'Active', 'INDB0000323', '2025-11-21 15:26:33'),
 (17, 1, 'savings', '3599136868', 500, 500, 'Active', 'INDB0000323', '2025-11-19 09:37:53'),
-(18, 3, 'savings', '3415149038', 5000, NULL, 'Active', 'INDB0000323', '2025-11-18 16:52:26'),
+(18, 3, 'savings', '3415149038', 4900, NULL, 'Active', 'INDB0000323', '2025-11-18 16:52:26'),
 (19, 9, 'savings', '9263465112', 10000, NULL, 'Active', 'INDB0000323', '2025-11-28 17:45:45');
 
 
@@ -177,5 +177,7 @@ INSERT INTO transaction (id, account_id, transaction_type, amount, transaction_d
 (56, 10, 'withdraw', 10, '2025-11-30 20:16:59', 1, 'completed'),
 (57, 12, 'withdraw', 20, '2025-11-30 20:27:04', 1, 'completed'),
 (58, 13, 'transfer', 200, '2025-11-30 20:27:52', 1, 'completed'),
-(59, 9, 'transfer', 200, '2025-11-30 20:27:52', 1, 'completed');
+(59, 9, 'transfer', 200, '2025-11-30 20:27:52', 1, 'completed'),
+(60, 3, 'withdraw', 30, '2025-12-01 16:38:28', 1, 'completed'),
+(61, 18, 'withdraw', 100, '2025-12-01 17:01:07', 1, 'completed');
 
