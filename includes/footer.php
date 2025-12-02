@@ -23,7 +23,7 @@
             <h4>
             <img src="../images/map-circle.png" alt="Location Icon" >    
             Location</h4>
-            <p>Indian Bank<br>
+            <p>Indian Bank Headquarters<br>
             Hanuman Road, New Delhi, India</p>
         </div>
 

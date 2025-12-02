@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once "../config/db.php"; // uses $conn from db.php
+require_once "../config/db.php";
 
 //  LOGIN CHECK 
 if (!isset($_SESSION['user_id'])) {
