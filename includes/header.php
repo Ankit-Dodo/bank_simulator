@@ -1,6 +1,9 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    session_start([
+    'cookie_lifetime' => 0,
+    'gc_maxlifetime' => 3600
+]);
 }
 
 $username = $_SESSION['username'] ?? 'User';

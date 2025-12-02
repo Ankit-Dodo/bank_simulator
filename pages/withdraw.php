@@ -68,8 +68,8 @@ if ($result && mysqli_num_rows($result) > 0) {
 include "../includes/header.php";
 ?>
 
-<link rel="stylesheet" href="../css/withdraw.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="../css/withdraw.css">
 
 <h3 class="page-title-center">Withdraw Money</h3>
 
@@ -178,3 +178,28 @@ document.getElementById('withdrawForm')?.addEventListener('submit', function(eve
 </script>
 
 <?php include "../includes/footer.php"; ?>
+<style>
+/* Do NOT let SweetAlert override page height */
+html.swal2-height-auto,
+body.swal2-height-auto {
+    height: 100% !important;
+}
+
+/* Keep overflow normal so footer does not move */
+body.swal2-shown {
+    overflow: visible !important;
+}
+
+/* Ensure SweetAlert stays on top of footer */
+.swal2-container {
+    z-index: 999999 !important;
+}
+
+/* Footer safely stays under content */
+.bank-footer {
+    position: relative !important;
+    z-index: 1;
+}
+
+
+</style>
