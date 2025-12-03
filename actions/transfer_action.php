@@ -26,7 +26,7 @@ if ($roleRes && mysqli_num_rows($roleRes) === 1) {
     $isAdmin = (strtolower($row['role']) === 'admin');
 }
 
-// ---------- Read & validate input ----------
+// Read & validate input 
 $from_account_id_raw = $_POST['from_id'] ?? '';
 $amount      = trim($_POST['amount'] ?? '');
 $acc         = trim($_POST['account_number'] ?? '');
@@ -60,7 +60,7 @@ if ($acc_digits === '' || strlen($acc_digits) < 6 || strlen($acc_digits) > 20) {
     die("Invalid receiver account number.");
 }
 
-// ---------- Find SENDER account ----------
+//  Find SENDER account 
 if ($isAdmin) {
     // Admin: any active account by ID
     $senderSql = "
