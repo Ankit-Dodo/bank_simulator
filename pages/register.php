@@ -69,10 +69,17 @@
         }
 
         // Password validation
-        const password = passwordInput.value.trim();
-        if (password.length < 5) {
-            passwordError.textContent = 'Password must be at least 5 characters.';
+        const password = passwordInput.value;
+        const passwordError = document.getElementById('passwordError'); // Assuming you have an error element
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+            
+        if (!strongPasswordRegex.test(password)) {
+            // If the test fails, display the detailed error message
+            passwordError.textContent = 'Password must be at least 8 characters long and include: a capital letter, a small letter, and a number.';
             isValid = false;
+        } else {
+            // If the password is valid, clear any existing error
+            passwordError.textContent = '';
         }
 
         if (!isValid) {

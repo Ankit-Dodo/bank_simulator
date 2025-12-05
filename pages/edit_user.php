@@ -1,4 +1,3 @@
-```php
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -352,14 +351,18 @@ if (form) {
             ok = false;
         }
 
-        if (p1 && p1.length < 5) {
-            errNew.textContent = "Password must be at least 5 characters.";
-            ok = false;
-        }
-
-        if (p1 && p1 !== p2) {
-            errConf.textContent = "Passwords do not match.";
-            ok = false;
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (p1 !== '') { 
+            // If a new password is provided, with strong password rules
+            if (p1.length < 8 || !strongPasswordRegex.test(p1)) {
+                errNew.textContent = "Password must be at least 8 characters long and include: one uppercase letter, one lowercase letter, and one number.";
+                ok = false;
+            }
+            // Check if the new password and confirmation match
+            if (p1 !== p2) {
+                errConf.textContent = "New password and confirm password do not match.";
+                ok = false;
+            }
         }
 
         return ok;
