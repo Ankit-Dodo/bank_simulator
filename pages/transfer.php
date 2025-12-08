@@ -85,7 +85,7 @@ include "../includes/header.php";
     });
 
     setTimeout(() => {
-        window.location.href = "/pages/deposit.php";
+        window.location.href = "/pages/transfer.php";
     }, 2600);
 </script>
 <?php endif; ?>

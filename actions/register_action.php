@@ -17,9 +17,38 @@ if ($username === '' || $email === '' || $password === '') {
     die("All fields are required");
 }
 
+// ---------- SERVER-SIDE VALIDATION ----------
+
+// 1. Username length
+if (strlen($username) < 3) {
+    die("Username must be at least 3 characters long.");
+}
+
+// 2. Email format validation
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    die("Invalid email format.");
+}
+
+// 3. Password strength check (at least 8 chars, one uppercase, one lowercase, one number)
+if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password)) {
+    die("Password must be at least 8 characters long and include a capital letter, a small letter, and a number.");
+}
+
+// 4. Check if email already exists
+$stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    die("This email is already registered.");
+}
+$stmt->close();
+
+// ---------- CONTINUE WITH REGISTRATION ----------
+
 $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-// escape values
+// Escape values for safe insertion
 $username_esc      = mysqli_real_escape_string($conn, $username);
 $email_esc         = mysqli_real_escape_string($conn, $email);
 $password_hash_esc = mysqli_real_escape_string($conn, $password_hash);
@@ -28,8 +57,10 @@ $sql = "INSERT INTO users (username, email, password_hash)
         VALUES ('$username_esc', '$email_esc', '$password_hash_esc')";
 
 if (mysqli_query($conn, $sql)) {
-    header("Location: ../pages/login.php");
+    // Redirect back to register page to show SweetAlert
+    header("Location: ../pages/register.php?success=1");
     exit;
 } else {
     echo "Error: " . mysqli_error($conn);
 }
+?>

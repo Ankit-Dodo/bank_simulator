@@ -41,8 +41,8 @@ $totalPendingSql = "SELECT COUNT(*) AS total_pending FROM account WHERE status='
 $totalPendingRes = mysqli_query($conn, $totalPendingSql);
 $totalPending = (int)mysqli_fetch_assoc($totalPendingRes)['total_pending'];
 
-// Total money in all accounts
-$totalMoneySql = "SELECT SUM(balance) AS total_money FROM account";
+// Total money in all ACTIVE accounts
+$totalMoneySql = "SELECT SUM(balance) AS total_money FROM account WHERE status='Active'";
 $totalMoneyRes = mysqli_query($conn, $totalMoneySql);
 $totalMoneyRow = mysqli_fetch_assoc($totalMoneyRes);
 $totalMoney = $totalMoneyRow['total_money'] ?? 0;
@@ -114,10 +114,10 @@ $offset = ($page - 1) * $perPage;
 
 // ALL ACCOUNTS query
 $accountsSql = "
-    SELECT a.id, a.account_number, a.account_type, a.balance, a.status,
+    SELECT a.id, a.account_number, a.account_type, a.balance, a.status AS account_status,
            a.ifsc_code, a.account_date,
            p.full_name, p.phone,
-           u.username, u.email
+           u.username, u.email, u.status AS user_status
     FROM account a
     JOIN profile p ON a.profile_id = p.id
     JOIN users u ON p.user_id = u.id
@@ -126,7 +126,6 @@ $accountsSql = "
     ORDER BY a.id DESC
     LIMIT $perPage OFFSET $offset
 ";
-
 $accountsRes = mysqli_query($conn, $accountsSql);
 ?>
 
@@ -279,7 +278,19 @@ $accountsRes = mysqli_query($conn, $accountsSql);
             <td><?= $row['ifsc_code'] ?></td>
             <td><?= $row['account_date'] ?></td>
             <td><?= number_format($row['balance'], 2) ?></td>
-            <td><span class="status <?= strtolower($row['status']) ?>"><?= $row['status'] ?></span></td>
+            <td>
+                <?php
+                    // Determine what status to display
+                    if (strtolower($row['user_status']) === 'inactive') {
+                        $displayStatus = 'Inactive';
+                    } else {
+                        $displayStatus = $row['account_status']; // Pending or Active
+                    }
+                    // Determine CSS class
+                    $statusClass = strtolower($displayStatus);
+                ?>
+                <span class="status <?= $statusClass ?>"><?= $displayStatus ?></span>
+            </td>
             <td>
                 <a href="../actions/delete_account.php?id=<?= $row['id'] ?>"
                    class="btn-delete"

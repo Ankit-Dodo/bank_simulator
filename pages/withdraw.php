@@ -83,10 +83,9 @@ include "../includes/header.php";
         showConfirmButton: false
     });
 
-    // remove query params so refresh doesn’t show it again
-    if (window.history.replaceState) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    setTimeout(() => {
+         window.location.href = "/pages/withdraw.php";
+     }, 2600);
 </script>
 <?php endif; ?>
 

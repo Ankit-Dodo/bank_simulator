@@ -145,15 +145,22 @@
 /* Pending */
 .status-pending,
 .status.pending {
-    background: #fff6c5;
-    color: #c29d0b;
+    background: #fff6c5;   
+    color: #c29d0b;        
 }
 
 /* Active */
 .status.active {
-    background: #e0f8e8;
-    color: #2e8b57;
+    background: #e0f8e8;   
+    color: #2e8b57;        
 }
+
+/* Inactive */
+.status.inactive {
+    background: #fbeaea;   
+    color: #d32f2f;        
+}
+
 /* DELETE BUTTON */
 .btn-delete {
     padding: 5px 10px;

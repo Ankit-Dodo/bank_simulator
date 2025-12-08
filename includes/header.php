@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="dropdown">
                 <a href="../pages/customer_details.php">
                     <img src="../images/add-user.png" alt="Create Icon" class="dropdown-icon">
-                    Add Details
+                    create new account
                 </a>
 
                 <a href="../actions/logout.php" class="logout-option">
@@ -78,7 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
 <?php if (!empty($_SESSION['user_id'])): ?>
     <div class="top-nav">
         <a href="../pages/home.php">Home</a>
-        <a href="../pages/deposit.php">Deposit</a>
+        <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+            <a href="../pages/deposit.php">Deposit</a>
+        <?php endif; ?>
         <a href="../pages/withdraw.php">Withdraw</a>
         <a href="../pages/transfer.php">Transfer</a>
         <a href="../pages/transaction.php">Transactions</a>
